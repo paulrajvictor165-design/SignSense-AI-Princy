@@ -1,0 +1,384 @@
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>SignSense AI — IBM SkillsBuild Project Report</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,"Segoe UI",system-ui,sans-serif;background:#f4f4f4;color:#1f2328;font-size:14px;line-height:1.7}
+  .page{max-width:820px;margin:0 auto;padding:32px 24px}
+
+  /* Cover */
+  .cover{background:linear-gradient(135deg,#0f62fe 0%,#0043ce 100%);color:#fff;padding:48px 40px;border-radius:10px;margin-bottom:32px;text-align:center}
+  .cover .eye{font-size:64px;margin-bottom:16px}
+  .cover h1{font-size:36px;font-weight:800;letter-spacing:.5px;margin-bottom:8px}
+  .cover .sub{font-size:17px;opacity:.88;margin-bottom:20px}
+  .meta{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-top:20px}
+  .meta-item{text-align:center}
+  .meta-item .label{font-size:10px;text-transform:uppercase;letter-spacing:1px;opacity:.7}
+  .meta-item .val{font-size:14px;font-weight:700;margin-top:2px}
+
+  /* Sections */
+  h2{font-size:20px;font-weight:700;color:#0f62fe;margin:32px 0 14px;padding-bottom:8px;border-bottom:2px solid #e5e7eb;display:flex;align-items:center;gap:8px}
+  h3{font-size:15px;font-weight:600;margin:16px 0 8px;color:#1f2328}
+  p{margin-bottom:10px;color:#1f2328}
+
+  /* Cards */
+  .card{background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:20px;margin-bottom:16px}
+  .card-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:20px}
+  .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+  .stat{background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:16px;text-align:center}
+  .stat .n{font-size:32px;font-weight:800;color:#0f62fe}
+  .stat .l{font-size:12px;color:#57606a;margin-top:4px}
+
+  /* Feature list */
+  .feat-list{list-style:none;margin:0;padding:0}
+  .feat-list li{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid #f0f0f0}
+  .feat-list li:last-child{border-bottom:none}
+  .feat-list .num{background:#0f62fe;color:#fff;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:2px}
+  .feat-list .info .title{font-weight:600;font-size:14px}
+  .feat-list .info .desc{color:#57606a;font-size:12px;margin-top:2px}
+  .feat-list .info .tech{font-size:11px;color:#0f62fe;margin-top:3px}
+
+  /* Phase table */
+  table{width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden;border:1px solid #e5e7eb;margin-bottom:20px}
+  th{background:#0f62fe;color:#fff;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;padding:10px 14px;text-align:left}
+  td{padding:9px 14px;border-top:1px solid #f0f0f0;font-size:13px;vertical-align:top}
+  tr:nth-child(even) td{background:#fafafe}
+
+  /* Quote / highlight */
+  .highlight{background:#eef4ff;border-left:4px solid #0f62fe;padding:14px 18px;border-radius:0 6px 6px 0;margin:16px 0;font-size:14px;color:#0043ce}
+
+  /* Tags */
+  .tag{display:inline-block;padding:2px 9px;border-radius:10px;font-size:11px;font-weight:600;margin:2px}
+  .tag.blue{background:#ddeeff;color:#0043ce}
+  .tag.green{background:#defce8;color:#198038}
+  .tag.yellow{background:#fdf3d8;color:#b28600}
+  .tag.red{background:#ffe0e0;color:#a2191f}
+  .tag.purple{background:#ede8ff;color:#6929c4}
+
+  /* Impact chart using CSS bars */
+  .bar-chart{margin:16px 0}
+  .bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+  .bar-label{width:160px;font-size:12px;text-align:right;color:#57606a;flex-shrink:0}
+  .bar-track{flex:1;background:#e5e7eb;border-radius:4px;height:18px;overflow:hidden}
+  .bar-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:8px;font-size:11px;font-weight:600;color:#fff;transition:width .3s}
+  .bar-pct{width:36px;font-size:12px;font-weight:600;color:#1f2328}
+
+  footer{text-align:center;margin-top:48px;padding-top:16px;border-top:1px solid #e5e7eb;color:#57606a;font-size:12px}
+</style>
+</head>
+<body>
+<div class="page">
+
+  
+  <div class="cover">
+    <div class="eye">👁️</div>
+    <h1>SignSense AI</h1>
+    <div class="sub">Universal Accessibility Assistant for the Visually Impaired</div>
+    <p style="opacity:.8;font-size:13px">IBM SkillsBuild Hackathon — Project Report</p>
+    <div class="meta">
+      <div class="meta-item"><div class="label">Project Type</div><div class="val">AI for Social Good</div></div>
+      <div class="meta-item"><div class="label">Platform</div><div class="val">Flutter + Python</div></div>
+      <div class="meta-item"><div class="label">AI Engine</div><div class="val">YOLOv8 + Gemini</div></div>
+      <div class="meta-item"><div class="label">APIs Used</div><div class="val">100% Free</div></div>
+      <div class="meta-item"><div class="label">Phases</div><div class="val">15 Phases</div></div>
+    </div>
+  </div>
+
+  
+  <div class="stat-grid">
+    <div class="stat"><div class="n">12</div><div class="l">Core Features</div></div>
+    <div class="stat"><div class="n">80+</div><div class="l">Object Classes</div></div>
+    <div class="stat"><div class="n">5</div><div class="l">Detection Modes</div></div>
+    <div class="stat"><div class="n">0₹</div><div class="l">API Cost</div></div>
+  </div>
+
+  
+  <h2>1. Problem Statement</h2>
+  <div class="highlight">
+    "Over 285 million people worldwide are visually impaired, including 39 million who are completely blind.
+    They face daily challenges navigating surroundings, reading text, identifying currency, and accessing emergency services — without adequate AI-powered assistive tools."
+  </div>
+  <p>Existing accessibility solutions are:</p>
+  <div class="card-grid">
+    <div class="card">
+      <h3>❌ Expensive</h3>
+      <p>Commercial visual assistants cost hundreds of dollars per year, pricing out users in developing nations like India.</p>
+    </div>
+    <div class="card">
+      <h3>❌ Limited Scope</h3>
+      <p>Most tools handle only one task (e.g., text reading or navigation) rather than a unified real-time assistant.</p>
+    </div>
+    <div class="card">
+      <h3>❌ Poor Offline Support</h3>
+      <p>Cloud-only tools fail in low-connectivity rural areas where accessibility needs are greatest.</p>
+    </div>
+    <div class="card">
+      <h3>❌ Language Barriers</h3>
+      <p>Most assistants support English only, ignoring users of Hindi, Tamil, Telugu, and regional languages.</p>
+    </div>
+  </div>
+
+  
+  <h2>2. Our Solution — SignSense AI</h2>
+  <p>SignSense AI is a free, open-source, AI-powered mobile accessibility assistant that continuously analyzes the user's surroundings through the smartphone camera and delivers real-time voice guidance — acting like a human companion.</p>
+
+  <ul class="feat-list">
+    <li>
+      <div class="num">1</div>
+      <div class="info">
+        <div class="title">Real-Time Object Detection</div>
+        <div class="desc">Continuously detects 80+ objects: chairs, stairs, doors, people, animals and announces position ("Chair on your left")</div>
+        <div class="tech">YOLOv8n · OpenCV · Camera stream</div>
+      </div>
+    </li>
+    <li>
+      <div class="num">2</div>
+      <div class="info">
+        <div class="title">Smart Navigation Assistant</div>
+        <div class="desc">Turn-by-turn walking directions with live GPS tracking and OpenStreetMap routing</div>
+        <div class="tech">OpenRouteService · Nominatim · flutter_map</div>
+      </div>
+    </li>
+    <li>
+      <div class="num">3</div>
+      <div class="info">
+        <div class="title">Traffic Signal Detection</div>
+        <div class="desc">Detects red/yellow/green signals and pedestrian crossings with voice alerts</div>
+        <div class="tech">YOLOv8 + HSV color analysis</div>
+      </div>
+    </li>
+    <li>
+      <div class="num">4</div>
+      <div class="info">
+        <div class="title">OCR Text Reader</div>
+        <div class="desc">Reads books, medicine labels, street boards, restaurant menus, newspapers in English and Hindi</div>
+        <div class="tech">EasyOCR · Multi-language support</div>
+      </div>
+    </li>
+    <li>
+      <div class="num">5</div>
+      <div class="info">
+        <div class="title">AI Scene Description (Gemini)</div>
+        <div class="desc">Full natural-language environment narration: "You are near a busy road. Two people are walking ahead."</div>
+        <div class="tech">Google Gemini 1.5 Flash (Free Tier)</div>
+      </div>
+    </li>
+    <li>
+      <div class="num">6</div>
+      <div class="info">
+        <div class="title">Indian Currency Detection</div>
+        <div class="desc">Identifies ₹10, ₹20, ₹50, ₹100, ₹200, ₹500, ₹2000 notes by denomination</div>
+        <div class="tech">Gemini Vision · Custom YOLOv8 model</div>
+      </div>
+    </li>
+    <li>
+      <div class="num">7</div>
+      <div class="info">
+        <div class="title">Emergency SOS</div>
+        <div class="desc">One-tap SOS sends live GPS location via SMS to emergency contact + direct dial to 112</div>
+        <div class="tech">Geolocator · SMS · url_launcher</div>
+      </div>
+    </li>
+    <li>
+      <div class="num">8</div>
+      <div class="info">
+        <div class="title">Voice Command Interface</div>
+        <div class="desc">Completely hands-free: "Detect objects", "Navigate", "Read text", "SOS" — zero tapping required</div>
+        <div class="tech">flutter_tts · speech_to_text</div>
+      </div>
+    </li>
+    <li>
+      <div class="num">9</div>
+      <div class="info">
+        <div class="title">Vehicle Detection</div>
+        <div class="desc">Detects approaching cars, bikes, buses, trucks and warns with direction ("Vehicle approaching from left")</div>
+        <div class="tech">YOLOv8 COCO classes</div>
+      </div>
+    </li>
+    <li>
+      <div class="num">10</div>
+      <div class="info">
+        <div class="title">Face Detection</div>
+        <div class="desc">Detects number and position of people's faces — helps user know if someone is nearby</div>
+        <div class="tech">MediaPipe Face Detection</div>
+      </div>
+    </li>
+    <li>
+      <div class="num">11</div>
+      <div class="info">
+        <div class="title">Color Detection</div>
+        <div class="desc">Identifies dominant colors in the scene — helps with clothing selection and object identification</div>
+        <div class="tech">OpenCV HSV analysis · 12 color classes</div>
+      </div>
+    </li>
+    <li>
+      <div class="num">12</div>
+      <div class="info">
+        <div class="title">Offline Mode</div>
+        <div class="desc">Core detection features (YOLO, OCR, colors) work without internet using on-device models</div>
+        <div class="tech">On-device models · sqflite · No cloud dependency</div>
+      </div>
+    </li>
+  </ul>
+
+  
+  <h2>3. Technical Architecture</h2>
+  <div class="card">
+    <h3>Three-Tier Architecture</h3>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:8px">
+      <div style="flex:1;min-width:180px;background:#eef4ff;padding:14px;border-radius:6px">
+        <div style="font-weight:700;color:#0f62fe;margin-bottom:6px">📱 Presentation Layer</div>
+        <div style="font-size:12px;color:#57606a">Flutter Mobile App<br />8 Screens · Provider State Mgmt<br />Accessibility Semantics<br />flutter_tts + speech_to_text</div>
+      </div>
+      <div style="flex:1;min-width:180px;background:#defce8;padding:14px;border-radius:6px">
+        <div style="font-weight:700;color:#198038;margin-bottom:6px">⚙️ Business Logic Layer</div>
+        <div style="font-size:12px;color:#57606a">Python Flask REST API<br />6 Blueprint Modules<br />YOLOv8 · EasyOCR · MediaPipe<br />OpenCV · SQLite</div>
+      </div>
+      <div style="flex:1;min-width:180px;background:#fdf3d8;padding:14px;border-radius:6px">
+        <div style="font-weight:700;color:#b28600;margin-bottom:6px">🌐 External Service Layer</div>
+        <div style="font-size:12px;color:#57606a">Google Gemini API<br />OpenRouteService API<br />Nominatim / OSM<br />Device GPS</div>
+      </div>
+    </div>
+  </div>
+
+  
+  <h2>4. Development Phases</h2>
+  <table>
+    <tr><th>Phase</th><th>Title</th><th>Deliverables</th><th>Status</th></tr>
+    <tr><td>1</td><td>Environment Setup</td><td>Folder structure, pubspec.yaml, requirements.txt</td><td><span class="tag green">✅ Done</span></td></tr>
+    <tr><td>2</td><td>Flutter UI Design</td><td>8 screens, themes, widgets, navigation</td><td><span class="tag green">✅ Done</span></td></tr>
+    <tr><td>3</td><td>Backend Development</td><td>Flask app, 6 blueprints, SQLite DB</td><td><span class="tag green">✅ Done</span></td></tr>
+    <tr><td>4</td><td>AI Model Integration</td><td>YOLOv8, EasyOCR, MediaPipe loaders</td><td><span class="tag green">✅ Done</span></td></tr>
+    <tr><td>5</td><td>Camera Integration</td><td>CameraProvider, live stream, image capture</td><td><span class="tag green">✅ Done</span></td></tr>
+    <tr><td>6</td><td>Object Detection</td><td>/api/detect/objects, DetectionOverlay widget</td><td><span class="tag green">✅ Done</span></td></tr>
+    <tr><td>7</td><td>Navigation Assistant</td><td>ORS routing, flutter_map, step instructions</td><td><span class="tag green">✅ Done</span></td></tr>
+    <tr><td>8</td><td>Traffic Detection</td><td>Traffic light colors, pedestrian alerts</td><td><span class="tag green">✅ Done</span></td></tr>
+    <tr><td>9</td><td>Currency Detection</td><td>Indian Rupee recognition via Gemini Vision</td><td><span class="tag green">✅ Done</span></td></tr>
+    <tr><td>10</td><td>OCR Text Reader</td><td>EasyOCR en+hi, voice readback</td><td><span class="tag green">✅ Done</span></td></tr>
+    <tr><td>11</td><td>Scene Description</td><td>Gemini 1.5 Flash integration</td><td><span class="tag green">✅ Done</span></td></tr>
+    <tr><td>12</td><td>Voice Assistant</td><td>VoiceProvider, 7 voice commands, TTS</td><td><span class="tag green">✅ Done</span></td></tr>
+    <tr><td>13</td><td>Emergency SOS</td><td>GPS + SMS + Call 112</td><td><span class="tag green">✅ Done</span></td></tr>
+    <tr><td>14</td><td>Testing</td><td>pytest backend tests, accessibility audit</td><td><span class="tag green">✅ Done</span></td></tr>
+    <tr><td>15</td><td>Deployment</td><td>APK build, gunicorn, README, docs</td><td><span class="tag green">✅ Done</span></td></tr>
+  </table>
+
+  
+  <h2>5. Accessibility Standards</h2>
+  <div class="card-grid">
+    <div class="card">
+      <h3>🎙️ Voice-First Design</h3>
+      <p>Every screen announces itself when opened. All buttons have semantic labels for screen readers. No visual-only feedback.</p>
+    </div>
+    <div class="card">
+      <h3>👁️ Visual Adaptations</h3>
+      <p>Dark mode by default. High-contrast mode. Text scale 80%–200%. Bounding boxes with high-contrast corner markers.</p>
+    </div>
+    <div class="card">
+      <h3>🔇 Haptic Feedback</h3>
+      <p>Optional vibration for key alerts (SOS sent, obstacle detected). Reduces reliance on visual or audio alone.</p>
+    </div>
+    <div class="card">
+      <h3>🌐 Multi-Language</h3>
+      <p>Voice output in English (India), Hindi, Tamil, Telugu, Kannada. OCR supports English and Hindi scripts.</p>
+    </div>
+  </div>
+
+  
+  <h2>6. Social Impact</h2>
+  <p>SignSense AI directly addresses UN Sustainable Development Goal 10 (Reduced Inequalities) and Goal 3 (Good Health and Well-being) by providing free, AI-powered assistance to:</p>
+  <div class="bar-chart">
+    <div class="bar-row">
+      <span class="bar-label">Blind individuals</span>
+      <div class="bar-track"><div class="bar-fill" style="width:95%;background:#0f62fe">Primary users</div></div>
+      <span class="bar-pct">39M</span>
+    </div>
+    <div class="bar-row">
+      <span class="bar-label">Low vision users</span>
+      <div class="bar-track"><div class="bar-fill" style="width:80%;background:#0043ce">Core users</div></div>
+      <span class="bar-pct">246M</span>
+    </div>
+    <div class="bar-row">
+      <span class="bar-label">Elderly population</span>
+      <div class="bar-track"><div class="bar-fill" style="width:65%;background:#8a3ffc">Secondary</div></div>
+      <span class="bar-pct">700M+</span>
+    </div>
+    <div class="bar-row">
+      <span class="bar-label">India specifically</span>
+      <div class="bar-track"><div class="bar-fill" style="width:50%;background:#24a148">Regional focus</div></div>
+      <span class="bar-pct">5M</span>
+    </div>
+  </div>
+
+  
+  <h2>7. What Makes SignSense AI Unique</h2>
+  <table>
+    <tr><th>Feature</th><th>SignSense AI</th><th>Typical Competitors</th></tr>
+    <tr><td>Cost</td><td><span class="tag green">100% Free</span></td><td>$100–$500/year</td></tr>
+    <tr><td>Object Detection</td><td><span class="tag green">80+ classes</span></td><td>Basic navigation only</td></tr>
+    <tr><td>Scene Description</td><td><span class="tag green">Gemini AI narration</span></td><td>Simple labels</td></tr>
+    <tr><td>Currency</td><td><span class="tag green">Indian Rupee ₹10–₹2000</span></td><td>Not available</td></tr>
+    <tr><td>Navigation</td><td><span class="tag green">Turn-by-turn walk</span></td><td>Basic maps only</td></tr>
+    <tr><td>Voice Commands</td><td><span class="tag green">Full hands-free</span></td><td>Tap only</td></tr>
+    <tr><td>Offline Mode</td><td><span class="tag green">Core features offline</span></td><td>Cloud only</td></tr>
+    <tr><td>Indian Languages</td><td><span class="tag green">5 Indian languages</span></td><td>English only</td></tr>
+    <tr><td>Emergency SOS</td><td><span class="tag green">GPS + SMS + Call</span></td><td>Not available</td></tr>
+  </table>
+
+  
+  <h2>8. IBM SkillsBuild Skills Applied</h2>
+  <p>
+    <span class="tag blue">Artificial Intelligence</span>
+    <span class="tag blue">Machine Learning</span>
+    <span class="tag blue">Computer Vision</span>
+    <span class="tag green">Cloud APIs</span>
+    <span class="tag green">Full Stack Development</span>
+    <span class="tag yellow">Mobile Development</span>
+    <span class="tag yellow">REST API Design</span>
+    <span class="tag purple">Accessibility Design</span>
+    <span class="tag purple">UX Design</span>
+    <span class="tag red">Python Programming</span>
+    <span class="tag red">Data Management</span>
+    <span class="tag blue">Open Source Tools</span>
+  </p>
+
+  
+  <h2>9. Future Roadmap</h2>
+  <div class="card-grid">
+    <div class="card">
+      <h3>🔮 v2.0 — Smart Glasses</h3>
+      <p>Integration with AR smart glasses for always-on ambient detection without holding a phone.</p>
+    </div>
+    <div class="card">
+      <h3>🤝 Social Features</h3>
+      <p>Volunteer network — sighted volunteers can connect via video call for real-time visual assistance.</p>
+    </div>
+    <div class="card">
+      <h3>📍 Indoor Navigation</h3>
+      <p>Wi-Fi fingerprinting for hospitals, malls, and public buildings using indoor positioning.</p>
+    </div>
+    <div class="card">
+      <h3>🌍 More Languages</h3>
+      <p>Expand OCR and voice to 22 Indian scheduled languages + 10 international languages.</p>
+    </div>
+  </div>
+
+  
+  <h2>10. Conclusion</h2>
+  <div class="highlight">
+    SignSense AI demonstrates that world-class AI assistive technology does not require expensive hardware or paid services.
+    By combining YOLOv8, Google Gemini, OpenStreetMap, and Flutter — all free and open-source — we deliver a production-quality
+    accessibility assistant that can transform the independence and quality of life for millions of visually impaired individuals worldwide.
+  </div>
+  <p>This project embodies IBM's mission of using technology to make the world more equitable, accessible, and humane.</p>
+
+  <footer>
+    <p><strong>SignSense AI</strong> — IBM SkillsBuild Project Report | v1.0.0</p>
+    <p style="margin-top:4px">Made with IBM Bob</p>
+  </footer>
+
+</div>
+</body>
+</html>

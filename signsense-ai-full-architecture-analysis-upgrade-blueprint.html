@@ -1,0 +1,615 @@
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>SignSense AI – Architecture Analysis</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"Segoe UI",system-ui,sans-serif;font-size:14px;line-height:1.6;background:#fff;color:#1f2328}
+.page{max-width:760px;margin:0 auto;padding:32px 20px 48px}
+h1{font-size:22px;font-weight:700;color:#1f2328;margin-bottom:4px}
+.subtitle{color:#57606a;font-size:13px;margin-bottom:32px;padding-bottom:16px;border-bottom:1px solid #e5e7eb}
+h2{font-size:14px;font-weight:700;color:#fff;background:#3b82d4;padding:8px 14px;border-radius:6px 6px 0 0;margin-top:28px;display:flex;align-items:center;gap:8px}
+.num{display:inline-flex;width:22px;height:22px;background:rgba(255,255,255,0.25);border-radius:50%;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}
+.card{background:#f7f8fa;border:1px solid #e5e7eb;border-top:none;border-radius:0 0 6px 6px;padding:16px 18px}
+h3{font-size:12px;font-weight:700;color:#57606a;text-transform:uppercase;letter-spacing:.05em;margin:14px 0 6px}
+h3:first-child{margin-top:0}
+p{margin-bottom:8px;font-size:13px}
+ul,ol{padding-left:18px;margin-bottom:10px}
+li{margin-bottom:3px;font-size:13px}
+table{width:100%;border-collapse:collapse;margin-bottom:10px;font-size:12px}
+th{background:#e5e7eb;text-align:left;padding:6px 10px;font-weight:700;color:#1f2328;border-bottom:2px solid #d0d7de}
+td{padding:5px 10px;border-bottom:1px solid #e5e7eb;vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr:nth-child(even) td{background:#f0f2f5}
+.badge{display:inline-block;padding:2px 7px;border-radius:10px;font-size:11px;font-weight:600}
+.red{background:#fee2e2;color:#991b1b}
+.yellow{background:#fef9c3;color:#854d0e}
+.green{background:#dcfce7;color:#166534}
+.blue{background:#dbeafe;color:#1e40af}
+.purple{background:#ede9fe;color:#5b21b6}
+.gray{background:#f3f4f6;color:#374151}
+code{background:#f0f2f5;border:1px solid #e5e7eb;border-radius:3px;padding:1px 5px;font-family:"Consolas","Menlo",monospace;font-size:11px;color:#1f2328}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.box{background:#fff;border:1px solid #e5e7eb;border-radius:5px;padding:12px 14px}
+.box-title{font-size:11px;font-weight:700;color:#57606a;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+.problem{display:grid;grid-template-columns:26px 1fr;gap:8px;margin-bottom:10px;align-items:start}
+.pnum{background:#fee2e2;color:#991b1b;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px}
+.ptext strong{display:block;font-size:13px;font-weight:600;color:#1f2328;margin-bottom:2px}
+.ptext span{font-size:12px;color:#57606a}
+.pipeline{display:flex;align-items:center;flex-wrap:wrap;gap:4px;margin-bottom:10px}
+.step{background:#fff;border:1px solid #e5e7eb;border-radius:4px;padding:5px 10px;font-size:12px;color:#1f2328;white-space:nowrap}
+.step.s-blue{border-color:#3b82d4;background:#eff6ff;color:#1e40af;font-weight:600}
+.step.s-green{border-color:#16a34a;background:#f0fdf4;color:#166534;font-weight:600}
+.step.s-purple{border-color:#7c5cd8;background:#f5f3ff;color:#5b21b6;font-weight:600}
+.step.s-red{border-color:#dc2626;background:#fff5f5;color:#991b1b;font-weight:600}
+.arrow{color:#57606a;font-size:14px}
+.new-item{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:4px;padding:8px 12px;margin-bottom:6px}
+.new-item strong{font-size:12px;font-weight:700;color:#166534}
+.new-item p{font-size:12px;color:#374151;margin:0}
+.modify-item{background:#fff;border:1px solid #e5e7eb;border-radius:4px;padding:8px 12px;margin-bottom:6px}
+.modify-item strong{display:block;font-size:12px;font-weight:700;color:#1e40af;margin-bottom:2px}
+.modify-item p{font-size:12px;color:#374151;margin:0}
+.opt-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.opt-item{background:#fff;border:1px solid #e5e7eb;border-radius:4px;padding:10px 12px}
+.opt-item strong{display:block;font-size:12px;font-weight:700;color:#3b82d4;margin-bottom:4px}
+.opt-item p{font-size:12px;color:#374151;margin:0}
+.divider{border:none;border-top:1px solid #e5e7eb;margin:6px 0 12px}
+footer{text-align:center;font-size:12px;color:#57606a;border-top:1px solid #e5e7eb;padding-top:16px;margin-top:40px}
+</style>
+</head>
+<body>
+<div class="page">
+
+<h1>SignSense AI — Architecture Analysis &amp; Upgrade Blueprint</h1>
+<p class="subtitle">IBM SkillsBuild Project  ·  Lead AI Architect Review  ·  Full codebase scan complete  ·  <strong>Analysis only — no code generated</strong></p>
+
+
+<h2><span class="num">1</span> Current Architecture</h2>
+<div class="card">
+  <h3>Flutter Frontend — lib/</h3>
+  <div class="grid2">
+    <div class="box">
+      <div class="box-title">10 Screens</div>
+      <ul>
+        <li>SplashScreen → OnboardingScreen</li>
+        <li>HomeScreen (8-card feature grid)</li>
+        <li>CameraScreen (live YOLO stream)</li>
+        <li>NavigationScreen (flutter_map + OSM tiles)</li>
+        <li>OCRScreen · CurrencyScreen</li>
+        <li>SceneDescriptionScreen (Gemini)</li>
+        <li>SOSScreen · HistoryScreen · SettingsScreen</li>
+      </ul>
+    </div>
+    <div class="box">
+      <div class="box-title">Providers &amp; Services</div>
+      <ul>
+        <li><code>AppProvider</code> — theme, scale, offline mode</li>
+        <li><code>VoiceProvider</code> — flutter_tts + speech_to_text</li>
+        <li><code>CameraProvider</code> — camera lifecycle</li>
+        <li><code>ApiService</code> — HTTP multipart to Flask</li>
+        <li><code>NavigationService</code> — Nominatim + ORS</li>
+        <li><code>DetectionService</code> — CameraImage → backend</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Flask Backend — 5 Blueprints</h3>
+  <div class="grid2">
+    <div class="box">
+      <div class="box-title">API Routes</div>
+      <ul>
+        <li><code>POST /api/detect/objects|traffic|vehicles|faces|colors</code></li>
+        <li><code>POST /api/ocr/read</code> — EasyOCR en+hi</li>
+        <li><code>POST /api/scene/describe</code> — Gemini 1.5 Flash</li>
+        <li><code>POST /api/currency/detect</code> — YOLO + Gemini fallback</li>
+        <li><code>POST /api/navigation/route</code> — Nominatim + ORS geojson</li>
+        <li><code>GET /health</code> — health check</li>
+      </ul>
+    </div>
+    <div class="box">
+      <div class="box-title">AI Stack</div>
+      <ul>
+        <li><code>ai_modules/__init__.py</code> — lazy model registry (thread-safe)</li>
+        <li>YOLOv8n (COCO 80 classes) — object/traffic/vehicle</li>
+        <li>EasyOCR 1.7.1 — text reader</li>
+        <li>MediaPipe — face detection + mesh</li>
+        <li>OpenCV HSV — color + traffic light analysis</li>
+        <li>SQLite — 3 tables: detection, ocr, navigation history</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Key Dependencies Already Installed</h3>
+  <table>
+    <tr><th>Library</th><th>Purpose</th><th>Status</th></tr>
+    <tr><td>Flask 3.0.3 + CORS</td><td>REST API server</td><td><span class="badge green">Active</span></td></tr>
+    <tr><td>YOLOv8 (ultralytics 8.2.87)</td><td>Object / traffic / vehicle detection</td><td><span class="badge green">Active</span></td></tr>
+    <tr><td>EasyOCR 1.7.1</td><td>Text reading (en+hi)</td><td><span class="badge green">Active</span></td></tr>
+    <tr><td>MediaPipe 0.10.14</td><td>Face detection + mesh</td><td><span class="badge green">Active</span></td></tr>
+    <tr><td>google-generativeai 0.7.2</td><td>Gemini 1.5 Flash (scene + currency)</td><td><span class="badge green">Active</span></td></tr>
+    <tr><td>geopy 2.4.1</td><td>Geocoding lib (installed but geopy unused — raw requests used)</td><td><span class="badge yellow">Underused</span></td></tr>
+    <tr><td>geolocator 13.x (Flutter)</td><td>GPS position + live stream</td><td><span class="badge green">Active</span></td></tr>
+    <tr><td>flutter_map + latlong2 (Flutter)</td><td>OSM tile rendering</td><td><span class="badge green">Active</span></td></tr>
+    <tr><td>google_maps_flutter</td><td>Native Google Maps SDK</td><td><span class="badge red">Missing</span></td></tr>
+    <tr><td>Flask-SocketIO / WebSocket</td><td>Real-time push to Flutter</td><td><span class="badge red">Missing</span></td></tr>
+    <tr><td>Google Places API client</td><td>Nearby POI search</td><td><span class="badge red">Missing</span></td></tr>
+  </table>
+</div>
+
+
+<h2><span class="num">2</span> Problems Identified</h2>
+<div class="card">
+  <div class="problem">
+    <div class="pnum">P1</div>
+    <div class="ptext">
+      <strong>No Google Maps — Only OpenStreetMap Tiles</strong>
+      <span>NavigationScreen uses flutter_map with raw OSM tile URLs. No Google Maps SDK, no autocomplete search, no turn-by-turn arrow overlays, no real-time traffic layer, no Street View.</span>
+    </div>
+  </div>
+  <div class="problem">
+    <div class="pnum">P2</div>
+    <div class="ptext">
+      <strong>No Nearby Places / POI Detection</strong>
+      <span>Zero implementation of shops, hospitals, ATMs, pharmacies, or restaurants around the user. A blind user cannot ask "what is around me?" No Google Places API or OSM Overpass integration exists.</span>
+    </div>
+  </div>
+  <div class="problem">
+    <div class="pnum">P3</div>
+    <div class="ptext">
+      <strong>No Shop / Storefront Recognition Pipeline</strong>
+      <span>OCR and camera detection are completely isolated. There is no combined pipeline: Camera frame → OCR reads sign → map cross-references location → AI confirms "you are in front of [Shop Name]".</span>
+    </div>
+  </div>
+  <div class="problem">
+    <div class="pnum">P4</div>
+    <div class="ptext">
+      <strong>Camera Frame Conversion is Incorrect (Critical Bug)</strong>
+      <span>DetectionService._convertToJpeg() returns raw plane[0] bytes of a YUV420 frame sent as a JPEG. The Flask backend calls PIL.Image.open() on this data — this will crash or silently fail on Android real devices.</span>
+    </div>
+  </div>
+  <div class="problem">
+    <div class="pnum">P5</div>
+    <div class="ptext">
+      <strong>No Obstacle-Aware Navigation</strong>
+      <span>The navigation route is a static polyline. There is no real-time obstacle detection fed back into routing. YOLO detects obstacles in CameraScreen but this data is never connected to the NavigationScreen.</span>
+    </div>
+  </div>
+  <div class="problem">
+    <div class="pnum">P6</div>
+    <div class="ptext">
+      <strong>ORS API Key Hardcoded in Flutter (Security Risk)</strong>
+      <span>NavigationService uses String.fromEnvironment('ORS_API_KEY') which defaults to a literal string 'YOUR_ORS_API_KEY'. In production builds this key is embedded in the APK binary and exposed.</span>
+    </div>
+  </div>
+  <div class="problem">
+    <div class="pnum">P7</div>
+    <div class="ptext">
+      <strong>Duplicate Routing Logic (Maintainability Risk)</strong>
+      <span>Route fetching exists in both Flutter (NavigationService) and Flask (navigation_routes.py) independently. Both call Nominatim + ORS separately. There is no single source of truth.</span>
+    </div>
+  </div>
+  <div class="problem">
+    <div class="pnum">P8</div>
+    <div class="ptext">
+      <strong>No AI Conversational Interface</strong>
+      <span>The app is feature-siloed (8 separate cards). The goal is an AI companion like ChatGPT/Alexa. There is no unified chat/command interface where a user can say "Take me to the nearest pharmacy" and get a combined response.</span>
+    </div>
+  </div>
+  <div class="problem">
+    <div class="pnum">P9</div>
+    <div class="ptext">
+      <strong>No Safe Route Guidance (Sidewalk / Footpath Preference)</strong>
+      <span>ORS foot-walking profile is used but no accessibility preferences (avoid stairs, prefer footpaths, wheelchair mode) are set. No pedestrian safety scoring exists in the route response.</span>
+    </div>
+  </div>
+</div>
+
+
+<h2><span class="num">3</span> New Architecture</h2>
+<div class="card">
+  <h3>New Design Principle — Unified AI Companion</h3>
+  <p>All features feed into a single <strong>AI Companion Layer</strong>. The user interacts through one continuous voice + text conversation. The AI selects the right tool (navigation, OCR, detection, places) automatically, just like Alexa or Gemini.</p>
+  <hr class="divider" />
+
+  <h3>Frontend — New Flutter Layer</h3>
+  <div class="grid2">
+    <div class="box">
+      <div class="box-title">New Screens to Add</div>
+      <ul>
+        <li><strong>AICompanionScreen</strong> — main chat UI (replaces HomeScreen as entry point)</li>
+        <li><strong>GoogleMapsScreen</strong> — Google Maps with live location + route overlay</li>
+        <li><strong>NearbyPlacesScreen</strong> — voice-driven POI list</li>
+        <li><strong>ShopRecognitionScreen</strong> — camera + OCR + map fusion</li>
+      </ul>
+    </div>
+    <div class="box">
+      <div class="box-title">New Services &amp; Providers</div>
+      <ul>
+        <li><strong>AICompanionService</strong> — routes voice/text commands to the right backend module</li>
+        <li><strong>GoogleMapsService</strong> — Places API, Directions API, Geocoding</li>
+        <li><strong>PlacesProvider</strong> — nearby POI state management</li>
+        <li><strong>ObstacleProvider</strong> — real-time obstacle state fed from camera</li>
+        <li><strong>LocationProvider</strong> — extracted from NavigationScreen into a shared provider</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Backend — New Flask Blueprints</h3>
+  <div class="grid2">
+    <div class="box">
+      <div class="box-title">New API Endpoints</div>
+      <ul>
+        <li><code>POST /api/ai/chat</code> — unified AI companion (Gemini + tool routing)</li>
+        <li><code>GET /api/places/nearby</code> — Google Places API proxy</li>
+        <li><code>POST /api/places/shop-recognize</code> — OCR + YOLO + places fusion</li>
+        <li><code>GET /api/navigation/safe-route</code> — ORS + obstacle-aware scoring</li>
+        <li><code>POST /api/navigation/obstacle-alert</code> — receives camera frame during nav, returns voice alert</li>
+        <li><code>GET /api/navigation/directions</code> — Google Directions API proxy</li>
+      </ul>
+    </div>
+    <div class="box">
+      <div class="box-title">New AI Modules</div>
+      <ul>
+        <li><strong>ai_companion.py</strong> — Gemini tool-use / function-calling orchestrator</li>
+        <li><strong>shop_recognizer.py</strong> — EasyOCR + YOLO + Places cross-reference</li>
+        <li><strong>obstacle_analyzer.py</strong> — YOLOv8 depth-estimation + proximity scoring</li>
+        <li><strong>places_service.py</strong> — Google Places API / OSM Overpass fallback</li>
+        <li><strong>route_safety.py</strong> — pedestrian safety scoring on ORS segments</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<h2><span class="num">4</span> Files to Modify</h2>
+<div class="card">
+  <h3>Backend Files</h3>
+  <div class="modify-item">
+    <strong>signsense_ai/backend/app.py</strong>
+    <p>Register 4 new blueprints: ai_companion_bp, places_bp, safe_route_bp, shop_recognize_bp. Add Flask-SocketIO for obstacle push events. Increase MAX_CONTENT_LENGTH to 32 MB for video frames.</p>
+  </div>
+  <div class="modify-item">
+    <strong>signsense_ai/backend/.env.example</strong>
+    <p>Add GOOGLE_MAPS_API_KEY, GOOGLE_PLACES_API_KEY. All API keys stay server-side only — never in Flutter.</p>
+  </div>
+  <div class="modify-item">
+    <strong>signsense_ai/backend/requirements.txt</strong>
+    <p>Add: flask-socketio, googlemaps (google-maps-services-python), shapely (already installed). Remove duplicate opencv entries.</p>
+  </div>
+  <div class="modify-item">
+    <strong>signsense_ai/backend/api/navigation_routes.py</strong>
+    <p>Add /safe-route endpoint (ORS with pedestrian preferences), /directions endpoint (Google Directions fallback), /obstacle-alert endpoint. Unify geocoding to use geopy (already installed).</p>
+  </div>
+  <div class="modify-item">
+    <strong>signsense_ai/backend/ai_modules/__init__.py</strong>
+    <p>Add get_gemini_model() (reuse single configured instance), get_obstacle_model() (YOLOv8 loaded once for navigation use), get_depth_estimator() (optional MiDaS for obstacle depth).</p>
+  </div>
+  <div class="modify-item">
+    <strong>signsense_ai/backend/database/db.py</strong>
+    <p>Add 3 new tables: ai_conversation_history (session_id, role, content, timestamp), places_cache (lat, lng, radius, json_result, timestamp), shop_recognition_history.</p>
+  </div>
+
+  <h3>Flutter Files</h3>
+  <div class="modify-item">
+    <strong>signsense_ai/flutter_app/pubspec.yaml</strong>
+    <p>Add: google_maps_flutter ^2.9.0, google_places_flutter ^2.0.7 (or flutter_google_places_sdk). Add web_socket_channel for SocketIO obstacle alerts. Remove hardcoded ORS key from NavigationService.</p>
+  </div>
+  <div class="modify-item">
+    <strong>signsense_ai/flutter_app/lib/services/detection_service.dart</strong>
+    <p>Fix critical bug: properly convert YUV420/BGRA CameraImage to valid JPEG bytes using image package before sending. Current plane[0] raw bytes approach fails silently on real Android devices.</p>
+  </div>
+  <div class="modify-item">
+    <strong>signsense_ai/flutter_app/lib/services/navigation_service.dart</strong>
+    <p>Remove embedded ORS key. Delegate ALL routing logic to Flask backend only. Add getGoogleRoute(), getNearbyPlaces(), startObstacleStream() methods.</p>
+  </div>
+  <div class="modify-item">
+    <strong>signsense_ai/flutter_app/lib/screens/navigation_screen.dart</strong>
+    <p>Add Google Maps widget as primary map (OSM as fallback). Add nearby places panel. Add real-time obstacle alert overlay. Add voice-guided turn-arrow HUD (accessible for blind users).</p>
+  </div>
+  <div class="modify-item">
+    <strong>signsense_ai/flutter_app/lib/screens/home_screen.dart</strong>
+    <p>Add "AI Companion" as a prominent top card. Add "Nearby Places" card. Add "Shop Recognition" card (replacing/expanding camera card). Update voice greeting to announce new features.</p>
+  </div>
+  <div class="modify-item">
+    <strong>signsense_ai/flutter_app/lib/utils/app_routes.dart</strong>
+    <p>Register 4 new routes: /ai-companion, /google-maps, /nearby-places, /shop-recognize.</p>
+  </div>
+  <div class="modify-item">
+    <strong>signsense_ai/flutter_app/lib/main.dart</strong>
+    <p>Add LocationProvider and PlacesProvider to MultiProvider tree. Initialize Google Maps API key via GoogleMap.init() in main().</p>
+  </div>
+  <div class="modify-item">
+    <strong>signsense_ai/flutter_app/android/app/src/main/AndroidManifest.xml</strong>
+    <p>Add Google Maps API key meta-data tag. Confirm ACCESS_FINE_LOCATION, INTERNET, and CAMERA permissions already present.</p>
+  </div>
+</div>
+
+
+<h2><span class="num">5</span> New Modules</h2>
+<div class="card">
+  <h3>Backend — New Python Files</h3>
+  <div class="new-item">
+    <strong>signsense_ai/backend/ai_modules/ai_companion.py</strong>
+    <p>Gemini 1.5 Flash with function-calling (tool-use). Receives user text or voice transcript. Routes to: navigation_tool, places_tool, detection_tool, ocr_tool, scene_tool. Returns single unified voice_message response. Maintains per-session conversation history in DB.</p>
+  </div>
+  <div class="new-item">
+    <strong>signsense_ai/backend/ai_modules/shop_recognizer.py</strong>
+    <p>Takes image + GPS coords. Runs EasyOCR to extract sign text. Runs YOLOv8 for business-class objects (storefront, signage). Calls Google Places Text Search with OCR text near user GPS. Returns shop name, category, distance, accessibility info.</p>
+  </div>
+  <div class="new-item">
+    <strong>signsense_ai/backend/ai_modules/obstacle_analyzer.py</strong>
+    <p>Dedicated YOLOv8 inference on navigation frames. Classifies obstacles by proximity zone (immediate &lt;1m, near 1-3m, far 3-5m) using bounding box size heuristics. Returns structured alert: obstacle type, position (left/center/right), urgency (high/medium/low).</p>
+  </div>
+  <div class="new-item">
+    <strong>signsense_ai/backend/api/places_routes.py</strong>
+    <p>Blueprint for /api/places/nearby (Google Places Nearby Search by type + radius), /api/places/search (text search), /api/places/shop-recognize (shop fusion pipeline). All API keys handled server-side.</p>
+  </div>
+  <div class="new-item">
+    <strong>signsense_ai/backend/api/ai_companion_routes.py</strong>
+    <p>Blueprint for POST /api/ai/chat. Accepts {session_id, message, image_base64 (optional), lat, lng}. Returns {voice_message, action_type, payload}. action_type can be: navigate, show_places, describe_scene, read_text, emergency.</p>
+  </div>
+  <div class="new-item">
+    <strong>signsense_ai/backend/utils/route_safety.py</strong>
+    <p>Takes ORS route segments. Scores each segment for pedestrian safety: footpath availability (OSM tags), crossing points, road width. Returns safety_score per segment and reroutes via ORS if score below threshold.</p>
+  </div>
+
+  <h3>Flutter — New Dart Files</h3>
+  <div class="new-item">
+    <strong>lib/screens/ai_companion_screen.dart</strong>
+    <p>The main AI chat interface. Microphone button for voice input → sends to /api/ai/chat → TTS speaks response. Optional camera button for vision-augmented questions. Conversation history displayed as accessible chat bubbles with large text.</p>
+  </div>
+  <div class="new-item">
+    <strong>lib/screens/google_maps_screen.dart</strong>
+    <p>google_maps_flutter GoogleMap widget with live location marker. Route polyline from Directions API. Nearby places markers color-coded by category. Accessible bottom sheet for step-by-step voice instructions. Replaces flutter_map for navigation mode.</p>
+  </div>
+  <div class="new-item">
+    <strong>lib/screens/nearby_places_screen.dart</strong>
+    <p>Voice-driven POI discovery. User says "find pharmacy" → calls /api/places/nearby → results listed with distance + voice announcement. Each card: place name, category, walking distance, "Navigate here" button.</p>
+  </div>
+  <div class="new-item">
+    <strong>lib/screens/shop_recognition_screen.dart</strong>
+    <p>Camera + OCR + Maps fusion. User points camera at a shop. Backend runs OCR + YOLO + Places. App speaks: "You are in front of [Name], a [category], open until [time]."</p>
+  </div>
+  <div class="new-item">
+    <strong>lib/providers/location_provider.dart</strong>
+    <p>Extracted from NavigationScreen. Shared GPS state across all screens. Live position stream. Feeds into AICompanionService, PlacesService, and ObstacleProvider.</p>
+  </div>
+  <div class="new-item">
+    <strong>lib/providers/places_provider.dart</strong>
+    <p>Holds nearby POI list state. Filters by category (pharmacy, food, ATM, hospital, bus_stop). Refreshes when user moves more than 50 meters.</p>
+  </div>
+  <div class="new-item">
+    <strong>lib/services/ai_companion_service.dart</strong>
+    <p>Sends user message + optional image + location to /api/ai/chat. Handles action routing: if action_type=navigate → opens GoogleMapsScreen. if action_type=show_places → opens NearbyPlacesScreen. Speaks voice_message automatically.</p>
+  </div>
+  <div class="new-item">
+    <strong>lib/services/google_maps_service.dart</strong>
+    <p>All Google APIs via Flask proxy (never direct from Flutter). getDirections(), getNearbyPlaces(), reverseGeocode(). Returns typed Dart models.</p>
+  </div>
+</div>
+
+
+<h2><span class="num">6</span> AI Pipeline</h2>
+<div class="card">
+  <h3>Unified AI Companion Pipeline</h3>
+  <div class="pipeline">
+    <div class="step s-blue">User Voice / Text</div><span class="arrow">→</span>
+    <div class="step">STT (speech_to_text)</div><span class="arrow">→</span>
+    <div class="step s-blue">AICompanionService</div><span class="arrow">→</span>
+    <div class="step">POST /api/ai/chat</div><span class="arrow">→</span>
+    <div class="step s-purple">Gemini 1.5 Flash (Function Calling)</div>
+  </div>
+  <div class="pipeline">
+    <div class="step s-purple">Gemini selects tool</div><span class="arrow">→</span>
+    <div class="step">navigate_tool | places_tool | ocr_tool | scene_tool | sos_tool</div>
+  </div>
+  <div class="pipeline">
+    <div class="step s-green">Tool executes</div><span class="arrow">→</span>
+    <div class="step">Gemini synthesizes natural language response</div><span class="arrow">→</span>
+    <div class="step s-blue">voice_message returned</div><span class="arrow">→</span>
+    <div class="step s-green">TTS speaks to user</div>
+  </div>
+
+  <hr class="divider" />
+  <h3>Vision AI Pipeline (Camera-Triggered)</h3>
+  <div class="pipeline">
+    <div class="step s-blue">CameraImage frame</div><span class="arrow">→</span>
+    <div class="step">JPEG encode (fixed)</div><span class="arrow">→</span>
+    <div class="step">POST /api/detect/objects</div><span class="arrow">→</span>
+    <div class="step s-purple">YOLOv8n (80 COCO classes)</div>
+  </div>
+  <div class="pipeline">
+    <div class="step">Detected objects + positions</div><span class="arrow">→</span>
+    <div class="step s-purple">obstacle_analyzer.py — proximity scoring</div><span class="arrow">→</span>
+    <div class="step s-red">URGENT: alert if obstacle &lt;1m ahead</div><span class="arrow">→</span>
+    <div class="step s-green">TTS speaks hazard</div>
+  </div>
+
+  <hr class="divider" />
+  <h3>Shop Recognition AI Pipeline</h3>
+  <div class="pipeline">
+    <div class="step s-blue">Camera frame + GPS</div><span class="arrow">→</span>
+    <div class="step">POST /api/places/shop-recognize</div>
+  </div>
+  <div class="pipeline">
+    <div class="step s-purple">EasyOCR — sign text</div><span class="arrow">→</span>
+    <div class="step s-purple">YOLOv8 — logo / storefront</div><span class="arrow">→</span>
+    <div class="step s-purple">Google Places Text Search</div>
+  </div>
+  <div class="pipeline">
+    <div class="step s-green">Gemini fuses all signals</div><span class="arrow">→</span>
+    <div class="step">"You are in front of Apollo Pharmacy, 20m to your left"</div><span class="arrow">→</span>
+    <div class="step s-green">TTS speaks</div>
+  </div>
+</div>
+
+
+<h2><span class="num">7</span> Navigation Pipeline</h2>
+<div class="card">
+  <h3>Live Navigation Flow</h3>
+  <div class="pipeline">
+    <div class="step s-blue">User says "Take me to [destination]"</div><span class="arrow">→</span>
+    <div class="step">AICompanionService</div><span class="arrow">→</span>
+    <div class="step">GET /api/navigation/safe-route</div>
+  </div>
+  <div class="pipeline">
+    <div class="step s-purple">Nominatim geocodes destination</div><span class="arrow">→</span>
+    <div class="step s-purple">ORS foot-walking (pedestrian prefs)</div><span class="arrow">→</span>
+    <div class="step s-purple">route_safety.py scores segments</div>
+  </div>
+  <div class="pipeline">
+    <div class="step s-green">Safe route returned (polyline + instructions)</div><span class="arrow">→</span>
+    <div class="step s-blue">GoogleMapsScreen renders route</div><span class="arrow">→</span>
+    <div class="step s-green">TTS: "Route found. 12 steps. 450 meters."</div>
+  </div>
+
+  <hr class="divider" />
+  <h3>During Navigation — Live Loop</h3>
+  <div class="pipeline">
+    <div class="step s-blue">GPS stream (every 10m)</div><span class="arrow">→</span>
+    <div class="step">LocationProvider updates position</div><span class="arrow">→</span>
+    <div class="step">Distance to next waypoint calculated</div>
+  </div>
+  <div class="pipeline">
+    <div class="step">&lt; 20m to waypoint</div><span class="arrow">→</span>
+    <div class="step s-green">TTS announces next instruction</div>
+  </div>
+  <div class="pipeline">
+    <div class="step s-blue">Camera frame (every 3 sec)</div><span class="arrow">→</span>
+    <div class="step">POST /api/navigation/obstacle-alert</div><span class="arrow">→</span>
+    <div class="step s-purple">obstacle_analyzer.py</div><span class="arrow">→</span>
+    <div class="step s-red">If hazard detected → TTS interrupt</div>
+  </div>
+
+  <hr class="divider" />
+  <h3>Nearby Places During Navigation</h3>
+  <div class="pipeline">
+    <div class="step s-blue">User moves &gt;50m</div><span class="arrow">→</span>
+    <div class="step">PlacesProvider.refresh()</div><span class="arrow">→</span>
+    <div class="step">GET /api/places/nearby</div><span class="arrow">→</span>
+    <div class="step s-green">TTS: "Hospital 200m on your right"</div>
+  </div>
+</div>
+
+
+<h2><span class="num">8</span> Google Maps Integration Plan</h2>
+<div class="card">
+  <table>
+    <tr><th>Component</th><th>Service Used</th><th>Where</th><th>Free Tier</th></tr>
+    <tr>
+      <td><strong>Map Rendering</strong></td>
+      <td>google_maps_flutter SDK</td>
+      <td>GoogleMapsScreen (Flutter)</td>
+      <td><span class="badge yellow">$200 credit/month</span></td>
+    </tr>
+    <tr>
+      <td><strong>Turn-by-Turn Directions</strong></td>
+      <td>Google Directions API (via Flask proxy)</td>
+      <td>/api/navigation/directions (new)</td>
+      <td><span class="badge yellow">2500 req/day free</span></td>
+    </tr>
+    <tr>
+      <td><strong>Nearby Places</strong></td>
+      <td>Google Places API Nearby Search</td>
+      <td>/api/places/nearby (new)</td>
+      <td><span class="badge yellow">$200 credit</span></td>
+    </tr>
+    <tr>
+      <td><strong>Shop Text Search</strong></td>
+      <td>Google Places Text Search</td>
+      <td>shop_recognizer.py (new)</td>
+      <td><span class="badge yellow">$200 credit</span></td>
+    </tr>
+    <tr>
+      <td><strong>Geocoding</strong></td>
+      <td>Google Geocoding API OR Nominatim (fallback)</td>
+      <td>navigation_routes.py (modified)</td>
+      <td><span class="badge green">Nominatim: free</span></td>
+    </tr>
+    <tr>
+      <td><strong>Reverse Geocoding</strong></td>
+      <td>Google Reverse Geocoding</td>
+      <td>location_provider.dart (new)</td>
+      <td><span class="badge yellow">$200 credit</span></td>
+    </tr>
+    <tr>
+      <td><strong>Map Fallback</strong></td>
+      <td>flutter_map + OSM (existing)</td>
+      <td>NavigationScreen (existing)</td>
+      <td><span class="badge green">Completely free</span></td>
+    </tr>
+  </table>
+
+  <h3>API Key Security Strategy</h3>
+  <ul>
+    <li>Google Maps API key (Android) stored only in <code>AndroidManifest.xml</code> meta-data — not in Dart code</li>
+    <li>Google Places, Directions, Geocoding keys stored only in Flask <code>.env</code> — never shipped in APK</li>
+    <li>Flutter makes all Places + Directions calls via Flask proxy endpoints (existing pattern)</li>
+    <li>HTTP Referrer restrictions set on Google Cloud Console to prevent key abuse</li>
+  </ul>
+
+  <h3>Dual-Map Strategy (Recommended)</h3>
+  <p>Keep both <strong>Google Maps</strong> (primary, richer features) and <strong>flutter_map/OSM</strong> (fallback when no API key or offline). User can toggle in Settings. This protects against Google API quota exhaustion.</p>
+</div>
+
+
+<h2><span class="num">9</span> Performance Optimization Plan</h2>
+<div class="card">
+  <div class="opt-grid">
+    <div class="opt-item">
+      <strong>Frame Throttling — Backend</strong>
+      <p>Current: every frame in stream is sent. New: token-bucket throttle at 2 frames/sec for obstacle detection during navigation. Use existing _frameQueued flag + timer reset.</p>
+    </div>
+    <div class="opt-item">
+      <strong>Model Warm-Up</strong>
+      <p>Move YOLO, EasyOCR, MediaPipe loading to Flask startup (not lazy on first request). Current cold-start on first API call is 4-8 seconds. Use app startup event to pre-warm all models.</p>
+    </div>
+    <div class="opt-item">
+      <strong>Places API Caching</strong>
+      <p>Cache nearby places results in SQLite for 5 minutes per GPS cell (50m grid). Current: zero caching. This reduces Google Places API calls by ~80% during a single navigation session.</p>
+    </div>
+    <div class="opt-item">
+      <strong>Image Resolution Reduction</strong>
+      <p>Send 320×240 JPEG (quality 70%) for real-time obstacle detection (speed). Send 640×480 for OCR and scene description (quality). resize_for_inference() already exists — just wire it to the camera stream.</p>
+    </div>
+    <div class="opt-item">
+      <strong>Gemini Prompt Caching</strong>
+      <p>For repeated scene descriptions (same GPS cell + similar frame), return cached Gemini response. Add image hash (MD5) → response cache in SQLite with 2-minute TTL.</p>
+    </div>
+    <div class="opt-item">
+      <strong>TTS Queue Management</strong>
+      <p>Current: VoiceProvider.speak() interrupts any ongoing speech. Add priority queue: URGENT (obstacle) always interrupts, NAVIGATION announcements queue, AMBIENT (places) only speak when idle.</p>
+    </div>
+    <div class="opt-item">
+      <strong>Background Location Batching</strong>
+      <p>Merge geolocator streams: CameraScreen, NavigationScreen, and PlacesProvider all currently request location independently. Centralize in LocationProvider — one stream, multiple listeners.</p>
+    </div>
+    <div class="opt-item">
+      <strong>YOLOv8 TorchScript</strong>
+      <p>yolov8n.torchscript already exists in the project root. Switch YOLO inference from .pt (Python) to .torchscript format for ~1.4x faster CPU inference with no accuracy loss.</p>
+    </div>
+  </div>
+</div>
+
+
+<h2><span class="num">★</span> Modification Summary</h2>
+<div class="card">
+  <table>
+    <tr><th>Category</th><th>Files Modified</th><th>New Files</th><th>Effort</th></tr>
+    <tr><td>Backend API</td><td>app.py, navigation_routes.py, requirements.txt, .env.example</td><td>places_routes.py, ai_companion_routes.py</td><td><span class="badge blue">Medium</span></td></tr>
+    <tr><td>Backend AI Modules</td><td>ai_modules/__init__.py</td><td>ai_companion.py, shop_recognizer.py, obstacle_analyzer.py</td><td><span class="badge blue">Medium</span></td></tr>
+    <tr><td>Backend Utils / DB</td><td>database/db.py</td><td>utils/route_safety.py, utils/places_service.py</td><td><span class="badge gray">Low</span></td></tr>
+    <tr><td>Flutter Screens</td><td>home_screen.dart, navigation_screen.dart</td><td>ai_companion_screen.dart, google_maps_screen.dart, nearby_places_screen.dart, shop_recognition_screen.dart</td><td><span class="badge purple">High</span></td></tr>
+    <tr><td>Flutter Services</td><td>detection_service.dart (bug fix), navigation_service.dart</td><td>ai_companion_service.dart, google_maps_service.dart</td><td><span class="badge blue">Medium</span></td></tr>
+    <tr><td>Flutter Providers</td><td>main.dart, app_routes.dart</td><td>location_provider.dart, places_provider.dart</td><td><span class="badge gray">Low</span></td></tr>
+    <tr><td>Flutter Config</td><td>pubspec.yaml, AndroidManifest.xml</td><td>—</td><td><span class="badge gray">Low</span></td></tr>
+    <tr><td><strong>Total</strong></td><td><strong>12 files modified</strong></td><td><strong>15 new files</strong></td><td><span class="badge blue">~3–5 days</span></td></tr>
+  </table>
+</div>
+
+<footer>Made with IBM Bob</footer>
+</div>
+</body>
+</html>

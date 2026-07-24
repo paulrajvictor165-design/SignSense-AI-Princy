@@ -1,0 +1,431 @@
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Module 2 — Completion Report</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    background: #ffffff;
+    color: #1f2328;
+    padding: 32px 16px;
+  }
+  .page { max-width: 760px; margin: 0 auto; }
+
+  h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  h2 { font-size: 15px; font-weight: 700; margin: 28px 0 10px; border-bottom: 1px solid #e5e7eb; padding-bottom: 6px; }
+  h3 { font-size: 13px; font-weight: 600; margin: 14px 0 6px; color: #1f2328; }
+  p  { margin-bottom: 8px; }
+
+  .meta { color: #57606a; font-size: 13px; margin-bottom: 24px; }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .badge-ok    { background: #dcfce7; color: #166534; }
+  .badge-done  { background: #dbeafe; color: #1e40af; }
+  .badge-warn  { background: #fef9c3; color: #92400e; }
+  .badge-new   { background: #ede9fe; color: #5b21b6; }
+
+  table { width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 13px; }
+  thead tr { background: #f7f8fa; }
+  th, td { text-align: left; padding: 7px 10px; border: 1px solid #e5e7eb; vertical-align: top; }
+  th { font-weight: 600; color: #1f2328; }
+  tr:nth-child(even) { background: #fafbfc; }
+
+  code {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    font-size: 12px;
+    background: #f7f8fa;
+    border: 1px solid #e5e7eb;
+    border-radius: 3px;
+    padding: 1px 5px;
+  }
+
+  .arch-box {
+    background: #f7f8fa;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 16px 20px;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    font-size: 12px;
+    line-height: 2;
+    color: #1f2328;
+    margin-bottom: 16px;
+  }
+  .arch-box .layer  { font-weight: 600; color: #3b82d4; }
+  .arch-box .arrow  { color: #57606a; }
+  .arch-box .note   { color: #57606a; font-style: italic; }
+
+  .section { margin-bottom: 8px; }
+  .risk-row td:first-child { font-weight: 600; }
+
+  .endpoint-table td:nth-child(2) { font-family: monospace; font-size: 12px; }
+
+  ol, ul { margin: 0 0 12px 20px; }
+  li { margin-bottom: 4px; }
+
+  .footer {
+    margin-top: 40px;
+    padding-top: 12px;
+    border-top: 1px solid #e5e7eb;
+    text-align: center;
+    font-size: 12px;
+    color: #57606a;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1>SignSense AI — Module 2 Completion Report</h1>
+  <p class="meta">Backend Service Layer Refactor  ·  Generated after full codebase audit</p>
+
+  
+  <h2>Status</h2>
+  <table>
+    <thead><tr><th>Item</th><th>Result</th></tr></thead>
+    <tbody>
+      <tr><td>Service layer architecture</td><td><span class="badge badge-ok">COMPLETE</span></td></tr>
+      <tr><td>All routes thin controllers</td><td><span class="badge badge-ok">COMPLETE</span></td></tr>
+      <tr><td>API backward compatibility</td><td><span class="badge badge-ok">100% PRESERVED</span></td></tr>
+      <tr><td>Flutter code changes required</td><td><span class="badge badge-ok">NONE</span></td></tr>
+      <tr><td>AI model behavior changed</td><td><span class="badge badge-ok">NONE — untouched</span></td></tr>
+      <tr><td>Error handling integrated</td><td><span class="badge badge-ok">COMPLETE</span></td></tr>
+      <tr><td>Logging integrated</td><td><span class="badge badge-ok">COMPLETE</span></td></tr>
+      <tr><td>Input validation integrated</td><td><span class="badge badge-ok">COMPLETE</span></td></tr>
+      <tr><td>Navigation history persistence</td><td><span class="badge badge-new">FIXED (gap G2)</span></td></tr>
+      <tr><td>Services package exports</td><td><span class="badge badge-new">IMPROVED (gap G3)</span></td></tr>
+    </tbody>
+  </table>
+
+  
+  <h2>Target Architecture — Achieved</h2>
+  <div class="arch-box">
+    <span class="layer">Flutter Client</span><br />
+    <span class="arrow">        ↓  HTTP POST /api/…</span><br />
+    <span class="layer">Routes / Controllers</span>  <span class="note">← api/*.py — only: validate · delegate · return</span><br />
+    <span class="arrow">        ↓</span><br />
+    <span class="layer">Services</span>               <span class="note">← services/*.py — all business logic lives here</span><br />
+    <span class="arrow">        ↓</span><br />
+    <span class="layer">AI Modules / Utils</span>     <span class="note">← ai_modules/__init__.py, utils/*.py — unchanged</span><br />
+    <span class="arrow">        ↓</span><br />
+    <span class="layer">Database / External APIs</span> <span class="note">← database/db.py, Gemini, ORS, Nominatim</span><br />
+    <span class="arrow">        ↓</span><br />
+    <span class="layer">JSON Response</span>
+  </div>
+
+  
+  <h2>Pre-Implementation Analysis</h2>
+  <p>Before any file was modified, all route files, service files, middleware, config, and database modules were fully read. Current responsibility of each route file:</p>
+  <table>
+    <thead><tr><th>Route File</th><th>Before Module 2</th><th>After Module 2</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>api/detection_routes.py</code></td>
+        <td>YOLO inference, HSV analysis, confidence filtering, voice message building, DB persistence, categorisation (≈297 lines of logic)</td>
+        <td>Validates image → delegates to <code>DetectionService</code> → returns JSON (5 thin functions, ~50 lines)</td>
+      </tr>
+      <tr>
+        <td><code>api/scene_routes.py</code></td>
+        <td>Mutable <code>_GEMINI_CONFIGURED</code> global, <code>os.getenv()</code> per request, <code>GenerativeModel</code> instantiation per request</td>
+        <td>Validates image → delegates to <code>SceneService</code> → returns JSON (1 function, ~15 lines)</td>
+      </tr>
+      <tr>
+        <td><code>api/ocr_routes.py</code></td>
+        <td>EasyOCR call, confidence filtering, text joining, DB persistence (≈65 lines)</td>
+        <td>Validates image → delegates to <code>OcrService</code> → returns JSON (1 function, ~12 lines)</td>
+      </tr>
+      <tr>
+        <td><code>api/currency_routes.py</code></td>
+        <td>Two AI pipelines (YOLO + Gemini), denomination data, parser, <code>os.getenv()</code> calls (≈154 lines)</td>
+        <td>Validates image → delegates to <code>CurrencyService</code> → returns JSON (1 function, ~9 lines)</td>
+      </tr>
+      <tr>
+        <td><code>api/navigation_routes.py</code></td>
+        <td>Geocoding, ORS HTTP calls, coordinate transformation, fallback logic, voice message (≈184 lines)</td>
+        <td>Validates JSON → delegates to <code>NavigationService</code> → returns JSON (~20 lines)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Business Logic Moved into Service Classes</h3>
+  <table>
+    <thead><tr><th>Logic Concern</th><th>Moved To</th></tr></thead>
+    <tbody>
+      <tr><td>YOLO inference, HSV traffic color analysis, position calculation, categorisation</td><td><code>DetectionService</code></td></tr>
+      <tr><td>Gemini API configuration, prompt management, image encoding, retry with back-off</td><td><code>SceneService</code></td></tr>
+      <tr><td>EasyOCR inference, confidence filter, text joining, DB persistence</td><td><code>OcrService</code></td></tr>
+      <tr><td>YOLO currency model, Gemini Vision fallback, denomination parsing, voice responses</td><td><code>CurrencyService</code></td></tr>
+      <tr><td>Nominatim geocoding, ORS route calculation, GeoJSON parsing, straight-line fallback</td><td><code>NavigationService</code></td></tr>
+    </tbody>
+  </table>
+
+  
+  <h2>Files Modified / Created</h2>
+  <table>
+    <thead><tr><th>File</th><th>Action</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>services/detection_service.py</code></td>
+        <td><span class="badge badge-done">CREATED</span></td>
+        <td>Extracted all detection business logic from the original fat routes file. YOLO, MediaPipe, HSV, voice messages.</td>
+      </tr>
+      <tr>
+        <td><code>services/scene_service.py</code></td>
+        <td><span class="badge badge-done">CREATED</span></td>
+        <td>Extracted Gemini Vision pipeline. Configures once at startup. Adds 1-retry with back-off. Removes mutable global.</td>
+      </tr>
+      <tr>
+        <td><code>services/ocr_service.py</code></td>
+        <td><span class="badge badge-done">CREATED</span></td>
+        <td>Extracted EasyOCR pipeline including confidence filtering and DB persistence.</td>
+      </tr>
+      <tr>
+        <td><code>services/currency_service.py</code></td>
+        <td><span class="badge badge-done">CREATED</span></td>
+        <td>Extracted dual-pipeline currency detection (YOLO→Gemini fallback). Gemini configured once at init.</td>
+      </tr>
+      <tr>
+        <td><code>services/navigation_service.py</code></td>
+        <td><span class="badge badge-done">CREATED</span></td>
+        <td>Extracted geocoding, ORS routing, GeoJSON parsing, fallback, voice messages. Added navigation history persistence (was missing).</td>
+      </tr>
+      <tr>
+        <td><code>services/__init__.py</code></td>
+        <td><span class="badge badge-new">IMPROVED</span></td>
+        <td>Was a one-line comment stub. Now exports all 5 service singletons with <code>__all__</code> — clean package API.</td>
+      </tr>
+      <tr>
+        <td><code>api/detection_routes.py</code></td>
+        <td><span class="badge badge-done">CREATED (thin)</span></td>
+        <td>Replaced fat route. 5 endpoints, each ≤5 lines of HTTP logic.</td>
+      </tr>
+      <tr>
+        <td><code>api/scene_routes.py</code></td>
+        <td><span class="badge badge-done">CREATED (thin)</span></td>
+        <td>Replaced fat route. Delegates entirely to SceneService.</td>
+      </tr>
+      <tr>
+        <td><code>api/ocr_routes.py</code></td>
+        <td><span class="badge badge-done">CREATED (thin)</span></td>
+        <td>Replaced fat route. Delegates entirely to OcrService.</td>
+      </tr>
+      <tr>
+        <td><code>api/currency_routes.py</code></td>
+        <td><span class="badge badge-done">CREATED (thin)</span></td>
+        <td>Replaced fat route. Delegates entirely to CurrencyService.</td>
+      </tr>
+      <tr>
+        <td><code>api/navigation_routes.py</code></td>
+        <td><span class="badge badge-done">CREATED (thin)</span></td>
+        <td>Replaced fat route. Uses <code>validate_json_body()</code>, delegates to NavigationService.</td>
+      </tr>
+      <tr>
+        <td><code>database/db.py</code></td>
+        <td><span class="badge badge-new">MODIFIED</span></td>
+        <td>Added <code>save_navigation()</code> — was missing despite <code>navigation_history</code> table existing. Fixed f-string logging to % style.</td>
+      </tr>
+      <tr>
+        <td><code>scene_routes.py</code> (workspace root)</td>
+        <td><span class="badge badge-warn">DEPRECATED</span></td>
+        <td>Original pre-refactor file. Not registered in <code>app.py</code>, not active. Added prominent deprecation docstring.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  
+  <h2>Files Intentionally Not Modified</h2>
+  <table>
+    <thead><tr><th>File</th><th>Reason</th></tr></thead>
+    <tbody>
+      <tr><td><code>ai_modules/__init__.py</code></td><td>Thread-safe lazy model registry is correct as-is. YOLO, EasyOCR, MediaPipe loaders untouched.</td></tr>
+      <tr><td><code>utils/image_utils.py</code></td><td>Decode, resize, position helpers are correct. No changes needed.</td></tr>
+      <tr><td><code>utils/color_detector.py</code></td><td>HSV color detection working correctly. Not a Module 2 concern.</td></tr>
+      <tr><td><code>middleware/error_handler.py</code></td><td>Global error handlers complete from Module 1. Services raise exceptions; handlers catch them.</td></tr>
+      <tr><td><code>middleware/request_validator.py</code></td><td>Image file and JSON body validators complete from Module 1.</td></tr>
+      <tr><td><code>config/settings.py</code></td><td>Central config complete from Module 1. Services use <code>settings.*</code> not <code>os.getenv()</code>.</td></tr>
+      <tr><td><code>app.py</code></td><td>Factory correct. All blueprints registered. Unchanged.</td></tr>
+      <tr><td>Flutter code</td><td>Zero Flutter changes — API contracts are 100% backward compatible.</td></tr>
+    </tbody>
+  </table>
+
+  
+  <h2>API Compatibility Confirmation</h2>
+  <table class="endpoint-table">
+    <thead><tr><th>#</th><th>Endpoint</th><th>Method</th><th>Request</th><th>Response Keys</th><th>Compatible?</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td><code>POST /api/detect/objects</code></td><td>POST</td><td>multipart image</td><td>detections, count, voice_message</td><td><span class="badge badge-ok">✓ 100%</span></td></tr>
+      <tr><td>2</td><td><code>POST /api/detect/traffic</code></td><td>POST</td><td>multipart image</td><td>detections, traffic_light_color, count, voice_message</td><td><span class="badge badge-ok">✓ 100%</span></td></tr>
+      <tr><td>3</td><td><code>POST /api/detect/vehicles</code></td><td>POST</td><td>multipart image</td><td>detections, count, voice_message</td><td><span class="badge badge-ok">✓ 100%</span></td></tr>
+      <tr><td>4</td><td><code>POST /api/detect/faces</code></td><td>POST</td><td>multipart image</td><td>detections, count, voice_message</td><td><span class="badge badge-ok">✓ 100%</span></td></tr>
+      <tr><td>5</td><td><code>POST /api/detect/colors</code></td><td>POST</td><td>multipart image</td><td>colors, voice_message</td><td><span class="badge badge-ok">✓ 100%</span></td></tr>
+      <tr><td>6</td><td><code>POST /api/scene/describe</code></td><td>POST</td><td>multipart image</td><td>description, voice_message</td><td><span class="badge badge-ok">✓ 100%</span></td></tr>
+      <tr><td>7</td><td><code>POST /api/ocr/read</code></td><td>POST</td><td>multipart image</td><td>text, blocks, count, voice_message</td><td><span class="badge badge-ok">✓ 100%</span></td></tr>
+      <tr><td>8</td><td><code>POST /api/currency/detect</code></td><td>POST</td><td>multipart image</td><td>denomination, currency, confidence, voice_message</td><td><span class="badge badge-ok">✓ 100%</span></td></tr>
+      <tr><td>9</td><td><code>POST /api/navigation/route</code></td><td>POST</td><td>JSON body (start_lat, start_lng, destination)</td><td>route_points, instructions, distance_meters, duration_seconds, voice_message</td><td><span class="badge badge-ok">✓ 100%</span></td></tr>
+      <tr><td>10</td><td><code>GET /health</code></td><td>GET</td><td>none</td><td>status, service, debug, version</td><td><span class="badge badge-ok">✓ 100%</span></td></tr>
+    </tbody>
+  </table>
+  <p><strong>Flutter client requires zero changes.</strong> All URL paths, HTTP methods, request field names, and response JSON keys are identical to the original implementation.</p>
+
+  
+  <h2>Testing Instructions</h2>
+  <h3>1. Start the Server</h3>
+  <div class="arch-box">
+cd signsense_ai/backend<br />
+cp .env.example .env   <span class="note"># fill in GEMINI_API_KEY and ORS_API_KEY</span><br />
+python -m venv .venv<br />
+.venv\Scripts\activate<br />
+pip install -r requirements.txt<br />
+python app.py
+  </div>
+
+  <h3>2. Health Check</h3>
+  <div class="arch-box">
+curl http://localhost:5000/health<br />
+<span class="note"># Expected: {"status":"ok","service":"SignSense AI Backend","debug":true,"version":"1.0.0"}</span>
+  </div>
+
+  <h3>3. Test Each Service Endpoint</h3>
+  <table>
+    <thead><tr><th>Endpoint</th><th>curl Command</th><th>Expected</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Object Detection</td>
+        <td><code>curl -X POST -F "image=@test.jpg" localhost:5000/api/detect/objects</code></td>
+        <td>JSON with detections[], count, voice_message</td>
+      </tr>
+      <tr>
+        <td>OCR</td>
+        <td><code>curl -X POST -F "image=@sign.jpg" localhost:5000/api/ocr/read</code></td>
+        <td>JSON with text, blocks, count, voice_message</td>
+      </tr>
+      <tr>
+        <td>Scene</td>
+        <td><code>curl -X POST -F "image=@scene.jpg" localhost:5000/api/scene/describe</code></td>
+        <td>JSON with description, voice_message</td>
+      </tr>
+      <tr>
+        <td>Currency</td>
+        <td><code>curl -X POST -F "image=@note.jpg" localhost:5000/api/currency/detect</code></td>
+        <td>JSON with denomination, currency, confidence, voice_message</td>
+      </tr>
+      <tr>
+        <td>Navigation</td>
+        <td><code>curl -X POST -H "Content-Type: application/json" -d '{"start_lat":12.97,"start_lng":77.59,"destination":"Cubbon Park"}' localhost:5000/api/navigation/route</code></td>
+        <td>JSON with route_points[], instructions[], distance_meters, duration_seconds, voice_message</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>4. Validation Tests</h3>
+  <ul>
+    <li>Send request with no image field → expect <code>400 VALIDATION_ERROR</code></li>
+    <li>Send a <code>.txt</code> file as image → expect <code>400 VALIDATION_ERROR</code> (MIME type check)</li>
+    <li>Send navigation request with missing <code>destination</code> field → expect <code>400 VALIDATION_ERROR</code></li>
+    <li>Send navigation request with non-existent destination → expect <code>404</code> with voice_message</li>
+  </ul>
+
+  <h3>5. Verify Database Persistence</h3>
+  <div class="arch-box">
+sqlite3 signsense_ai/backend/database/signsense.db<br />
+SELECT * FROM detection_history LIMIT 5;<br />
+SELECT * FROM ocr_history LIMIT 5;<br />
+SELECT * FROM navigation_history LIMIT 5;  <span class="note">← now populated (was missing)</span>
+  </div>
+
+  
+  <h2>Possible Risks</h2>
+  <table>
+    <thead><tr><th>Risk</th><th>Severity</th><th>Mitigation</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Gemini API key not set</td>
+        <td><span class="badge badge-warn">Medium</span></td>
+        <td><code>settings._require()</code> raises <code>RuntimeError</code> at startup — server will not start silently broken. Message clearly names missing variable.</td>
+      </tr>
+      <tr>
+        <td>ORS API key not set</td>
+        <td><span class="badge badge-warn">Medium</span></td>
+        <td>Same as above — hard startup failure with clear error message.</td>
+      </tr>
+      <tr>
+        <td>YOLO model file missing</td>
+        <td><span class="badge badge-ok">Low</span></td>
+        <td><code>settings.YOLO_MODEL_PATH</code> defaults to <code>yolov8n.pt</code>. Model loaded lazily on first request — error surfaced as 500 with logged traceback, not silent failure.</td>
+      </tr>
+      <tr>
+        <td>Currency YOLO model absent</td>
+        <td><span class="badge badge-ok">Low</span></td>
+        <td><code>CURRENCY_MODEL_PATH</code> defaults to empty string. <code>CurrencyService.detect()</code> silently skips YOLO and falls through to Gemini Vision.</td>
+      </tr>
+      <tr>
+        <td>Gemini transient error (scene/currency)</td>
+        <td><span class="badge badge-ok">Low</span></td>
+        <td><code>SceneService</code> has 1 retry with 1 s back-off. <code>CurrencyService</code> returns a graceful degradation response — never raises to the route.</td>
+      </tr>
+      <tr>
+        <td>Nominatim rate limiting</td>
+        <td><span class="badge badge-ok">Low</span></td>
+        <td><code>NavigationService.geocode()</code> logs warning and returns <code>None</code> → route returns 404 with a user-friendly voice_message.</td>
+      </tr>
+      <tr>
+        <td>Thread safety of MediaPipe FaceDetection singleton</td>
+        <td><span class="badge badge-warn">Medium</span></td>
+        <td>Model is protected by <code>_lock</code> during initialisation. Inference itself is not lock-protected but MediaPipe is documented as thread-safe for inference. Monitor under load in Module 5.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  
+  <h2>Architecture Improvements — Summary</h2>
+  <table>
+    <thead><tr><th>Problem (Before)</th><th>Fix (After)</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Routes contained 150–297 lines of mixed HTTP + AI business logic</td>
+        <td>Routes are 9–50 lines of pure HTTP coordination (validate → delegate → return)</td>
+      </tr>
+      <tr>
+        <td><code>os.getenv()</code> called on every HTTP request for API keys</td>
+        <td>Keys read once from <code>settings.*</code> at service construction time</td>
+      </tr>
+      <tr>
+        <td>Mutable <code>_GEMINI_CONFIGURED</code> module-level global (not thread-safe)</td>
+        <td><code>genai.configure()</code> called once in <code>SceneService.__init__</code></td>
+      </tr>
+      <tr>
+        <td>Gemini <code>GenerativeModel</code> instantiated per request</td>
+        <td>Single model instance stored on service object, reused across all requests</td>
+      </tr>
+      <tr>
+        <td><code>navigation_history</code> table existed but was never written to</td>
+        <td><code>save_navigation()</code> added to <code>db.py</code>, called from <code>NavigationService.get_route()</code></td>
+      </tr>
+      <tr>
+        <td>Services package was an empty stub — no exports</td>
+        <td><code>services/__init__.py</code> exports all 5 singletons with <code>__all__</code></td>
+      </tr>
+      <tr>
+        <td>Exception handlers used f-string logging (deferred formatting lost on error)</td>
+        <td>All logging uses <code>%</code>-style lazy formatting (Python logging best practice)</td>
+      </tr>
+      <tr>
+        <td>Service classes have NO Flask imports — independently unit-testable</td>
+        <td>Confirmed: zero Flask imports in any service file. Pure Python classes.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="footer">Made with IBM Bob</div>
+</div>
+</body>
+</html>

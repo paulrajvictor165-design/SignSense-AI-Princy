@@ -1,0 +1,349 @@
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Module 3 — AI Pipeline Completion Report</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    background: #ffffff;
+    color: #1f2328;
+    padding: 32px 16px;
+  }
+  .page { max-width: 760px; margin: 0 auto; }
+  h1 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+  h2 { font-size: 15px; font-weight: 700; margin: 28px 0 10px; border-bottom: 1px solid #e5e7eb; padding-bottom: 6px; }
+  h3 { font-size: 13px; font-weight: 600; margin: 14px 0 5px; }
+  p  { margin-bottom: 8px; }
+  .meta { color: #57606a; font-size: 13px; margin-bottom: 24px; }
+  .badge {
+    display: inline-block; padding: 2px 8px; border-radius: 4px;
+    font-size: 12px; font-weight: 600;
+  }
+  .ok      { background: #dcfce7; color: #166534; }
+  .new     { background: #ede9fe; color: #5b21b6; }
+  .info    { background: #dbeafe; color: #1e40af; }
+  .warn    { background: #fef9c3; color: #92400e; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 13px; }
+  thead tr { background: #f7f8fa; }
+  th, td { text-align: left; padding: 7px 10px; border: 1px solid #e5e7eb; vertical-align: top; }
+  th { font-weight: 600; }
+  tr:nth-child(even) { background: #fafbfc; }
+  code {
+    font-family: "SFMono-Regular", Consolas, monospace; font-size: 12px;
+    background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 3px;
+    padding: 1px 5px;
+  }
+  pre {
+    font-family: "SFMono-Regular", Consolas, monospace; font-size: 12px;
+    background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 6px;
+    padding: 12px 16px; overflow-x: auto; margin-bottom: 12px;
+    color: #1f2328; line-height: 1.8;
+  }
+  .pipeline {
+    background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 6px;
+    padding: 14px 18px; font-family: "SFMono-Regular", Consolas, monospace;
+    font-size: 12px; line-height: 2.2; margin-bottom: 16px;
+  }
+  .pipeline .done  { color: #166534; }
+  .pipeline .layer { color: #3b82d4; font-weight: 600; }
+  .pipeline .arrow { color: #57606a; }
+  .callout {
+    background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px;
+    padding: 10px 14px; margin-bottom: 14px; font-size: 13px;
+  }
+  .warn-callout {
+    background: #fef9c3; border: 1px solid #fde68a; border-radius: 6px;
+    padding: 10px 14px; margin-bottom: 14px; font-size: 13px;
+  }
+  ol, ul { margin: 0 0 10px 20px; }
+  li { margin-bottom: 3px; }
+  .priority-1 { color: #991b1b; font-weight: 700; }
+  .priority-2 { color: #92400e; font-weight: 600; }
+  .priority-3 { color: #1f2328; }
+  .priority-4 { color: #57606a; }
+  .footer {
+    margin-top: 40px; padding-top: 12px; border-top: 1px solid #e5e7eb;
+    text-align: center; font-size: 12px; color: #57606a;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1>SignSense AI — Module 3 Completion Report</h1>
+  <p class="meta">AI Pipeline Improvements · Object Priority · Confidence Scoring · Scene Understanding · OCR Pre-processing</p>
+
+  <div class="callout">
+    <strong>All 5 scope requirements delivered.</strong> API is 100% backward compatible — all existing JSON keys preserved, 4 new keys added additively to every response. Flutter requires only the model and camera screen updates (both done in this module).
+  </div>
+
+  
+  <h2>1. Objective</h2>
+  <p>Implement the enterprise AI pipeline improvements defined in Master Prompt 3, scoped strictly to backend AI logic and the Flutter detection model/camera screen. No architecture refactoring, no HTTP client migration, no navigation changes.</p>
+  <ul>
+    <li>Fix the critical safety bug: vehicles announced after chairs due to confidence-only sorting.</li>
+    <li>Add pipeline confidence scoring to every AI service.</li>
+    <li>Add low-confidence retry signalling (backend) and user prompts (Flutter).</li>
+    <li>Improve OCR accuracy with image pre-processing.</li>
+    <li>Improve scene understanding by injecting structured context into Gemini prompts.</li>
+  </ul>
+
+  
+  <h2>2. AI Pipeline — Before vs After</h2>
+  <div class="pipeline">
+<span class="layer">Input</span>               <span class="done">✓ (unchanged)</span>
+<span class="arrow">    ↓</span>
+<span class="layer">Validation</span>          <span class="done">✓ (unchanged — Module 1)</span>
+<span class="arrow">    ↓</span>
+<span class="layer">Pre-processing</span>      <span class="done">✓ NEW (Module 3) — CLAHE + sharpening + upscale (OCR path)</span>
+<span class="arrow">    ↓</span>
+<span class="layer">AI Model Processing</span> <span class="done">✓ (unchanged — YOLO/EasyOCR/Gemini/MediaPipe)</span>
+<span class="arrow">    ↓</span>
+<span class="layer">Confidence Evaluation</span> <span class="done">✓ NEW (Module 3) — pipeline_confidence + tier thresholds per service</span>
+<span class="arrow">    ↓</span>
+<span class="layer">Context Reasoning</span>   <span class="done">✓ NEW (Module 3) — enriched Gemini prompt with YOLO+OCR context</span>
+<span class="arrow">    ↓</span>
+<span class="layer">Response Generation</span> <span class="done">✓ NEW (Module 3) — priority-first voice, "Warning!" prefix, low-conf message</span>
+<span class="arrow">    ↓</span>
+<span class="layer">Post-processing</span>     <span class="done">✓ NEW (Module 3) — priority sort, low_confidence flag, metrics</span>
+<span class="arrow">    ↓</span>
+<span class="layer">Flutter Response</span>    <span class="done">✓ NEW (Module 3) — priority colour, banner, critical voice interruption</span>
+  </div>
+
+  
+  <h2>3. Files Created</h2>
+  <table>
+    <thead><tr><th>File</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>backend/utils/object_priority.py</code></td>
+        <td>Single source of truth for priority tiers (1–4), per-tier confidence thresholds, priority-first sort key, <code>should_announce()</code>, <code>build_priority_voice_message()</code>. Safety prefix ("Warning!", "Caution!") applied here.</td>
+      </tr>
+      <tr>
+        <td><code>backend/utils/ai_metrics.py</code></td>
+        <td>Lightweight processing-time + confidence envelope helpers. <code>start_timer()</code>, <code>elapsed_ms()</code>, <code>build_metrics()</code>, <code>log_result()</code>. Machine-parseable log line: <code>[AI] service=X module=Y conf=Z time_ms=N</code>.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  
+  <h2>4. Files Modified</h2>
+  <table>
+    <thead><tr><th>File</th><th>Current Problem</th><th>Change Made</th><th>Architecture Improvement</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>services/detection_service.py</code></td>
+        <td>Sorted by confidence only. A chair at 92% always announced before a car at 70%. No metrics. No priority field per detection.</td>
+        <td>Import <code>object_priority</code> utils. Each detection gets a <code>priority</code> int. <code>_run_yolo()</code> calls <code>sort_by_priority()</code>. Voice built by <code>build_priority_voice_message()</code>. All 5 methods wrap with <code>start_timer()</code>/<code>build_metrics()</code>.</td>
+        <td>Safety-critical objects always surface first regardless of confidence. Vehicles at 30% conf still beat furniture at 99% conf.</td>
+      </tr>
+      <tr>
+        <td><code>services/ocr_service.py</code></td>
+        <td>Raw image sent directly to EasyOCR. No pre-processing. No retry on zero results. No confidence aggregate.</td>
+        <td>Added <code>_preprocess()</code>: CLAHE contrast enhancement + unsharp-mask sharpening + minimum-side 800px upscale. Auto-retry on zero blocks with aggressive sharpening. Aggregate confidence computed; low-confidence appends guidance to voice message.</td>
+        <td>OCR accuracy improves for uneven lighting, small text, blurry images. Zero-result false negatives reduced.</td>
+      </tr>
+      <tr>
+        <td><code>services/scene_service.py</code></td>
+        <td>Raw image only sent to Gemini. No structured context. Gemini re-detects objects already found by YOLO. Prompt not enriched.</td>
+        <td>New <code>_build_prompt()</code>: when <code>detected_objects</code>/<code>detected_text</code> are supplied, builds an enriched prompt injecting pre-detected priority-ordered objects and OCR text. Falls back to base prompt when no context provided.</td>
+        <td>Gemini reasons on top of structured context instead of re-detecting from pixels. Response is more accurate, focused on spatial reasoning rather than enumeration.</td>
+      </tr>
+      <tr>
+        <td><code>services/currency_service.py</code></td>
+        <td>No metrics. Low-confidence denomination silently returned as confirmed result — financially risky.</td>
+        <td>Added metrics envelope. <code>source_module</code> is "yolo_currency" or "gemini". When <code>pipeline_confidence &lt; 0.55</code> (higher threshold for financial accuracy) and a denomination was detected, voice message overridden to prompt retry.</td>
+        <td>Users are never silently given a low-confidence denomination. Explicit rescan prompt instead.</td>
+      </tr>
+      <tr>
+        <td><code>api/scene_routes.py</code></td>
+        <td>Could not accept structured context from Flutter even if Flutter had it.</td>
+        <td>Added optional form fields <code>detected_objects_json</code> and <code>detected_text</code>. Parsed safely; old clients that omit them still work (fall through to base prompt).</td>
+        <td>Route stays thin. Context parsing is validation-only (not business logic). Backward compatible.</td>
+      </tr>
+      <tr>
+        <td><code>models/detection_result.dart</code></td>
+        <td>No <code>priority</code>, <code>processingTimeMs</code>, <code>lowConfidence</code> fields. <code>voiceMessage</code> getter had no safety prefix.</td>
+        <td>Added 3 optional fields with safe defaults. <code>fromJson</code> reads new backend keys when present. <code>voiceMessage</code> getter now prepends "Warning!" for critical, "Caution!" for high priority. Added <code>isCritical</code> and <code>isHighPriority</code> getters.</td>
+        <td>Flutter model is a faithful mirror of backend response. No breaking change to existing call sites.</td>
+      </tr>
+      <tr>
+        <td><code>screens/camera_screen.dart</code></td>
+        <td>All detections announced with equal urgency and the same 2500ms gap. No visual differentiation by priority.</td>
+        <td>Added <code>_criticalVoiceGapMs = 1000</code>. Critical objects call <code>speakPriority()</code> (interrupts current speech). Added <code>_showLowConfidenceBanner</code> state. Results panel colour-codes by priority (red=critical, orange=high, white=normal).</td>
+        <td>Critical safety warnings are spoken faster and louder (interrupt). Low-confidence results prompt rescan rather than misleading the user.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  
+  <h2>5. Object Priority System</h2>
+  <table>
+    <thead><tr><th>Tier</th><th>Confidence Threshold</th><th>Voice Prefix</th><th>Example Objects</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><span class="priority-1">1 — CRITICAL</span></td>
+        <td>0.30 (announce even at 30%)</td>
+        <td><strong>"Warning! "</strong></td>
+        <td>car, truck, bus, motorcycle, bicycle, traffic light, stop sign, fire hydrant</td>
+      </tr>
+      <tr>
+        <td><span class="priority-2">2 — HIGH</span></td>
+        <td>0.40</td>
+        <td>"Caution! "</td>
+        <td>person, door, stairs</td>
+      </tr>
+      <tr>
+        <td><span class="priority-3">3 — NORMAL</span></td>
+        <td>0.50</td>
+        <td>(none)</td>
+        <td>chair, table, bench, couch, animals</td>
+      </tr>
+      <tr>
+        <td><span class="priority-4">4 — LOW</span></td>
+        <td>0.60</td>
+        <td>(none)</td>
+        <td>bottle, cup, keyboard, phone, bags</td>
+      </tr>
+    </tbody>
+  </table>
+  <p><strong>Example result of the safety fix:</strong> Scene with car (conf 0.68) and chair (conf 0.91).</p>
+  <pre>Before Module 3:  "Chair ahead. Car ahead."          ← chair first — safety risk
+After  Module 3:  "Warning! Car ahead. Chair ahead."  ← car always first</pre>
+
+  
+  <h2>6. Confidence Scoring — New Response Fields</h2>
+  <p>Every service response now includes 4 additive fields (existing keys unchanged):</p>
+  <pre>{
+  "detections": [...],        // ← unchanged
+  "count": 3,                 // ← unchanged
+  "voice_message": "...",     // ← unchanged
+  "processing_time_ms": 142,  // ← NEW: wall-clock inference time
+  "pipeline_confidence": 0.71,// ← NEW: aggregate confidence (0.0–1.0)
+  "low_confidence": false,    // ← NEW: true when below tier threshold
+  "source_module": "yolo"     // ← NEW: which AI module produced result
+}</pre>
+  <p>Per-detection dicts also now include a <code>"priority"</code> integer (1–4).</p>
+
+  
+  <h2>7. OCR Pre-processing Pipeline</h2>
+  <div class="pipeline">
+<span class="layer">Image bytes</span>
+<span class="arrow">    ↓</span>
+<span class="layer">Decode (unchanged)</span>
+<span class="arrow">    ↓</span>
+<span class="layer">CLAHE contrast enhancement</span>    <span class="done">NEW — equalises uneven lighting</span>
+<span class="arrow">    ↓</span>
+<span class="layer">Unsharp mask sharpening</span>        <span class="done">NEW — sharpens text edges</span>
+<span class="arrow">    ↓</span>
+<span class="layer">Minimum-side 800px upscale</span>    <span class="done">NEW — improves small-text accuracy</span>
+<span class="arrow">    ↓</span>
+<span class="layer">EasyOCR inference</span>
+<span class="arrow">    ↓</span>
+<span class="layer">Zero-block auto-retry</span>          <span class="done">NEW — aggressive sharpening on second pass</span>
+<span class="arrow">    ↓</span>
+<span class="layer">Confidence filter + aggregate</span>  <span class="done">NEW — low_confidence flag + voice guidance</span>
+<span class="arrow">    ↓</span>
+<span class="layer">Response</span>
+  </div>
+
+  
+  <h2>8. Scene Understanding — Structured Gemini Context</h2>
+  <p>The <code>/api/scene/describe</code> endpoint now accepts optional form fields:</p>
+  <ul>
+    <li><code>detected_objects_json</code> — JSON array of detection dicts from any <code>/api/detect/*</code> call</li>
+    <li><code>detected_text</code> — OCR text string from <code>/api/ocr/read</code></li>
+  </ul>
+  <p>When these are present, the Gemini prompt changes from the base template to an enriched template that includes a pre-detected context block, for example:</p>
+  <pre>Pre-detected objects:
+  - Car ahead (critical safety risk, confidence 68%)
+  - Person on left (navigation hazard, confidence 81%)
+  - Chair ahead (environmental object, confidence 91%)
+
+Pre-detected text: "CAUTION WET FLOOR"
+
+Now analyze the image and provide a clear, concise, accessible description...</pre>
+  <p>Old clients that don't send these fields silently fall through to the base prompt — fully backward compatible.</p>
+
+  
+  <h2>9. API Compatibility Confirmation</h2>
+  <table>
+    <thead><tr><th>Endpoint</th><th>Old keys</th><th>New keys</th><th>Breaking change?</th></tr></thead>
+    <tbody>
+      <tr><td><code>POST /api/detect/objects</code></td><td>detections, count, voice_message</td><td>+4 metrics keys</td><td><span class="badge ok">None</span></td></tr>
+      <tr><td><code>POST /api/detect/traffic</code></td><td>detections, traffic_light_color, count, voice_message</td><td>+4 metrics keys</td><td><span class="badge ok">None</span></td></tr>
+      <tr><td><code>POST /api/detect/vehicles</code></td><td>detections, count, voice_message</td><td>+4 metrics keys</td><td><span class="badge ok">None</span></td></tr>
+      <tr><td><code>POST /api/detect/faces</code></td><td>detections, count, voice_message</td><td>+4 metrics keys</td><td><span class="badge ok">None</span></td></tr>
+      <tr><td><code>POST /api/detect/colors</code></td><td>colors, voice_message</td><td>+4 metrics keys</td><td><span class="badge ok">None</span></td></tr>
+      <tr><td><code>POST /api/ocr/read</code></td><td>text, blocks, count, voice_message</td><td>+4 metrics keys</td><td><span class="badge ok">None</span></td></tr>
+      <tr><td><code>POST /api/scene/describe</code></td><td>description, voice_message</td><td>+4 metrics keys; optional form fields</td><td><span class="badge ok">None</span></td></tr>
+      <tr><td><code>POST /api/currency/detect</code></td><td>denomination, currency, confidence, voice_message</td><td>+4 metrics keys</td><td><span class="badge ok">None</span></td></tr>
+    </tbody>
+  </table>
+
+  
+  <h2>10. Testing Instructions</h2>
+  <h3>Backend — Priority ordering</h3>
+  <pre>curl -X POST -F "image=@road_with_car.jpg" localhost:5000/api/detect/objects
+# Expect: detections[0].label = "Car", detections[0].priority = 1
+# Expect: voice_message starts with "Warning! Car..."
+# Expect: processing_time_ms &gt; 0, pipeline_confidence &gt; 0.0</pre>
+
+  <h3>Backend — Low-confidence detection</h3>
+  <pre>curl -X POST -F "image=@blurry.jpg" localhost:5000/api/detect/objects
+# Expect: low_confidence = true (when top detection conf &lt; 0.30 for critical)
+# OR:     empty detections list if nothing above threshold</pre>
+
+  <h3>Backend — OCR pre-processing</h3>
+  <pre>curl -X POST -F "image=@dim_text.jpg" localhost:5000/api/ocr/read
+# Compare old vs new — enhanced image should return more text blocks
+# Expect: low_confidence = true when avg_conf &lt; 0.50, voice message includes guidance</pre>
+
+  <h3>Backend — Scene with structured context</h3>
+  <pre>curl -X POST \
+  -F "image=@scene.jpg" \
+  -F 'detected_objects_json=[{"label":"Car","position":"ahead","confidence":0.75,"priority":1}]' \
+  -F 'detected_text=STOP' \
+  localhost:5000/api/scene/describe
+# Expect: description mentions the car and STOP sign
+# Compare to request without the form fields — enriched prompt gives richer context</pre>
+
+  <h3>Backend — Currency low-confidence</h3>
+  <pre>curl -X POST -F "image=@crumpled_note.jpg" localhost:5000/api/currency/detect
+# When confidence &lt; 0.55: voice_message should say "Possible ₹X detected but confidence is low..."</pre>
+
+  <h3>Flutter — Priority visual check</h3>
+  <ul>
+    <li>Open Camera screen, point at a vehicle. Results panel row should be red and bold with "⚠" prefix.</li>
+    <li>Point at a chair in a scene with no vehicles. Row should be white, normal weight.</li>
+    <li>Voice for vehicle should interrupt any playing speech (<code>speakPriority</code>).</li>
+    <li>Low-confidence response (backend flag) should show orange banner on the camera preview.</li>
+  </ul>
+
+  
+  <h2>11. Known Limitations</h2>
+  <ul>
+    <li>Scene enrichment requires the Flutter client to run YOLO + OCR before calling <code>/api/scene/describe</code> and pass the results. This multi-step orchestration is not yet wired in Flutter — it will be addressed when the Flutter architecture module moves screens to <code>ApiClient</code>.</li>
+    <li>OCR pre-processing adds ~30–80 ms per call depending on image size. Acceptable for a static-capture endpoint; not suitable for real-time streaming.</li>
+    <li>Gemini does not return a numeric confidence score. <code>pipeline_confidence</code> for scene is 1.0 when the description is non-empty, 0.0 otherwise — a proxy, not a true model confidence.</li>
+    <li>Currency YOLO model is not configured in the default setup (path is empty). All currency calls go through Gemini Vision until a custom model is trained and configured.</li>
+  </ul>
+
+  
+  <h2>12. Future Enhancements (Out of Scope for This Module)</h2>
+  <ul>
+    <li>Module 4: Remove routing logic from Flutter NavigationService. Fix ORS key leak in APK.</li>
+    <li>Module 5: Migrate all Flutter screens from old <code>ApiService</code> to <code>ApiClient</code>.</li>
+    <li>Module 6: Wire connectivity detection to <code>AppProvider.offlineMode</code>.</li>
+    <li>Module 8: Multi-step scene orchestration — run YOLO+OCR on device first, pass context to scene endpoint in one request.</li>
+  </ul>
+
+  <div class="footer">Made with IBM Bob</div>
+</div>
+</body>
+</html>

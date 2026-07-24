@@ -1,0 +1,84 @@
+name: signsense_ai
+description: SignSense AI – Universal Accessibility Assistant for blind and visually impaired users.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Camera & Media
+  camera: ^0.11.0+2
+  image_picker: ^1.1.2
+  image: ^4.2.0
+
+  # HTTP & Networking
+  http: ^1.2.2
+  http_parser: ^4.1.1
+  dio: ^5.7.0
+  connectivity_plus: ^6.1.4
+
+  # State Management
+  provider: ^6.1.2
+
+  # Voice & TTS
+  flutter_tts: ^4.2.0
+  # speech_to_text v7+ is pure Maven Central — no jcenter dependency
+  speech_to_text: ^7.0.0
+
+  # Location & Maps
+  geolocator: ^13.0.4
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
+
+  # Local Database
+  sqflite: ^2.4.1
+  path_provider: ^2.1.5
+  path: ^1.9.1
+
+  # Permissions
+  permission_handler: ^11.3.1
+
+  # UI & Theming
+  google_fonts: ^6.2.1
+  cupertino_icons: ^1.0.8
+  flutter_animate: ^4.5.2
+  lottie: ^3.3.1
+  shimmer: ^3.0.0
+
+  # Storage
+  shared_preferences: ^2.3.3
+  flutter_secure_storage: ^9.2.2
+
+  # SOS / Sharing — flutter_contacts replaces contacts_service (no jcenter)
+  flutter_contacts: ^1.1.9+1
+  url_launcher: ^6.3.1
+  share_plus: ^10.0.1
+
+  # Notifications
+  flutter_local_notifications: ^18.0.1
+
+  # Other Utils
+  intl: ^0.19.0
+  uuid: ^4.5.1
+  logger: ^2.5.0
+  cached_network_image: ^3.4.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  build_runner: ^2.4.13
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/icons/
+    - assets/images/
+    - assets/sounds/
+
+  # Fonts are loaded via google_fonts at runtime — no local .ttf files needed.
+  # Remove the local fonts block entirely to avoid missing-asset build errors.

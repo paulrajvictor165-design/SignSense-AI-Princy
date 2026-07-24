@@ -1,0 +1,505 @@
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>SignSense AI — Enterprise Architecture Report</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"Segoe UI",system-ui,sans-serif;font-size:14px;line-height:1.6;background:#fff;color:#1f2328}
+.page{max-width:760px;margin:0 auto;padding:32px 20px 48px}
+h1{font-size:22px;font-weight:700;margin-bottom:4px}
+.subtitle{color:#57606a;font-size:13px;margin-bottom:28px;padding-bottom:16px;border-bottom:2px solid #3b82d4}
+h2{font-size:13px;font-weight:700;color:#fff;background:#1f2328;padding:8px 14px;border-radius:6px 6px 0 0;margin-top:28px;display:flex;align-items:center;gap:8px}
+h2.blue{background:#3b82d4}
+h2.red{background:#dc2626}
+h2.green{background:#16a34a}
+h2.purple{background:#7c5cd8}
+h2.orange{background:#d97706}
+.num{display:inline-flex;width:22px;height:22px;background:rgba(255,255,255,0.2);border-radius:50%;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}
+.card{background:#f7f8fa;border:1px solid #e5e7eb;border-top:none;border-radius:0 0 6px 6px;padding:16px 18px}
+h3{font-size:11px;font-weight:700;color:#57606a;text-transform:uppercase;letter-spacing:.06em;margin:14px 0 6px}
+h3:first-child{margin-top:0}
+p{font-size:13px;margin-bottom:8px;color:#1f2328}
+ul,ol{padding-left:18px;margin-bottom:10px}
+li{font-size:13px;margin-bottom:3px}
+table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:10px}
+th{background:#e5e7eb;text-align:left;padding:6px 10px;font-weight:700;border-bottom:2px solid #d0d7de}
+td{padding:5px 10px;border-bottom:1px solid #e5e7eb;vertical-align:top}
+tr:nth-child(even) td{background:#f0f2f5}
+tr:last-child td{border-bottom:none}
+code{background:#f0f2f5;border:1px solid #e5e7eb;border-radius:3px;padding:1px 5px;font-size:11px;font-family:Consolas,monospace}
+.badge{display:inline-block;padding:2px 7px;border-radius:10px;font-size:11px;font-weight:600}
+.b-red{background:#fee2e2;color:#991b1b}
+.b-yellow{background:#fef9c3;color:#854d0e}
+.b-green{background:#dcfce7;color:#166534}
+.b-blue{background:#dbeafe;color:#1e40af}
+.b-purple{background:#ede9fe;color:#5b21b6}
+.b-gray{background:#f3f4f6;color:#374151}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.box{background:#fff;border:1px solid #e5e7eb;border-radius:5px;padding:12px 14px}
+.box-title{font-size:11px;font-weight:700;color:#57606a;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+.problem{display:grid;grid-template-columns:26px 1fr;gap:8px;margin-bottom:12px;align-items:start}
+.pnum{background:#fee2e2;color:#991b1b;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px}
+.pnum.warn{background:#fef9c3;color:#854d0e}
+.pnum.info{background:#dbeafe;color:#1e40af}
+.ptxt strong{display:block;font-size:13px;font-weight:600;margin-bottom:2px}
+.ptxt span{font-size:12px;color:#57606a}
+.ptxt code{font-size:11px}
+.module{background:#fff;border:1px solid #e5e7eb;border-left:4px solid #3b82d4;border-radius:4px;padding:10px 14px;margin-bottom:8px}
+.module.done{border-left-color:#16a34a}
+.module.active{border-left-color:#d97706}
+.module-title{font-size:13px;font-weight:700;color:#1f2328;display:flex;align-items:center;gap:8px}
+.module-desc{font-size:12px;color:#57606a;margin-top:3px}
+.divider{border:none;border-top:1px solid #e5e7eb;margin:10px 0}
+footer{text-align:center;font-size:12px;color:#57606a;border-top:1px solid #e5e7eb;padding-top:16px;margin-top:40px}
+</style>
+</head>
+<body>
+<div class="page">
+
+<h1>SignSense AI — Enterprise Architecture Report</h1>
+<p class="subtitle">
+  Principal Architect Review  ·  Phase 1: Complete Project Analysis  · 
+  <strong>Every finding grounded in actual code — zero assumptions</strong>
+</p>
+
+
+<h2 class="blue"><span class="num">1</span> Complete Project Inventory (Ground Truth)</h2>
+<div class="card">
+  <h3>Flutter — lib/ (33 files read and audited)</h3>
+  <div class="grid2">
+    <div class="box">
+      <div class="box-title">Screens (10)</div>
+      <ul>
+        <li><code>splash_screen.dart</code> — animated boot, first-launch check</li>
+        <li><code>onboarding_screen.dart</code> — 4-page PageView with voice</li>
+        <li><code>home_screen.dart</code> — 8-card feature grid</li>
+        <li><code>camera_screen.dart</code> — live YOLO detection (just refactored)</li>
+        <li><code>ocr_screen.dart</code> — capture-then-upload OCR</li>
+        <li><code>currency_screen.dart</code> — capture-then-upload currency</li>
+        <li><code>scene_description_screen.dart</code> — Gemini scene AI</li>
+        <li><code>navigation_screen.dart</code> — flutter_map + ORS routing</li>
+        <li><code>sos_screen.dart</code> — GPS + SMS + share SOS</li>
+        <li><code>settings_screen.dart</code> — theme, TTS, language, contact</li>
+        <li><code>history_screen.dart</code> — sqflite detection log</li>
+      </ul>
+    </div>
+    <div class="box">
+      <div class="box-title">Providers / Services / Models</div>
+      <ul>
+        <li><code>AppProvider</code> — 11 prefs persisted to SharedPrefs</li>
+        <li><code>VoiceProvider</code> — flutter_tts + speech_to_text</li>
+        <li><code>CameraProvider</code> — lifecycle + stream (refactored)</li>
+        <li><code>ApiService</code> — all HTTP calls to Flask</li>
+        <li><code>DetectionService</code> — camera→JPEG→backend (refactored)</li>
+        <li><code>NavigationService</code> — Nominatim + ORS routing</li>
+        <li><code>DatabaseService</code> — sqflite 3-table local DB</li>
+        <li><code>NotificationService</code> — flutter_local_notifications</li>
+        <li><code>DetectionResult</code> + <code>BoundingBox</code> models</li>
+        <li><code>RouteResult</code> — ORS GeoJSON parser</li>
+        <li><code>FrameConverter</code> — YUV420/BGRA→JPEG (new)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="grid2">
+    <div class="box">
+      <div class="box-title">Widgets (3)</div>
+      <ul>
+        <li><code>FeatureCard</code> — home grid card with Semantics</li>
+        <li><code>DetectionOverlay</code> — CustomPainter bounding boxes</li>
+        <li><code>VoiceFAB</code> — mic FAB with keyword routing</li>
+      </ul>
+    </div>
+    <div class="box">
+      <div class="box-title">Utils (3)</div>
+      <ul>
+        <li><code>AppTheme</code> — IBM Design System colors + Material 3</li>
+        <li><code>AppRoutes</code> — named route generator (11 routes)</li>
+        <li><code>FrameConverter</code> — new isolate-based converter</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Backend — Python Flask (9 files read and audited)</h3>
+  <div class="grid2">
+    <div class="box">
+      <div class="box-title">API Blueprints (5)</div>
+      <ul>
+        <li><code>detection_routes.py</code> — 5 endpoints (YOLO + MediaPipe + HSV)</li>
+        <li><code>ocr_routes.py</code> — EasyOCR en+hi</li>
+        <li><code>scene_routes.py</code> — Gemini 1.5 Flash vision</li>
+        <li><code>currency_routes.py</code> — YOLO + Gemini fallback</li>
+        <li><code>navigation_routes.py</code> — Nominatim + ORS geojson</li>
+      </ul>
+    </div>
+    <div class="box">
+      <div class="box-title">AI / Utils / DB</div>
+      <ul>
+        <li><code>ai_modules/__init__.py</code> — lazy model loader (thread-safe)</li>
+        <li><code>utils/image_utils.py</code> — decode + safe decode + resize</li>
+        <li><code>utils/color_detector.py</code> — HSV 12-color masking</li>
+        <li><code>database/db.py</code> — SQLite 3 tables</li>
+        <li><code>app.py</code> — factory, CORS, blueprint registration</li>
+        <li><code>requirements.txt</code> — 17 deps including JAX, scipy</li>
+        <li><code>yolov8n.pt</code> + <code>yolov8n.torchscript</code> physically present</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<h2 class="orange"><span class="num">2</span> Current Architecture — Honest Diagnosis</h2>
+<div class="card">
+  <h3>What Is Good (Keep As-Is)</h3>
+  <ul>
+    <li><strong>Flask blueprint pattern</strong> — clean separation per feature, easy to extend</li>
+    <li><strong>Lazy model loader</strong> in <code>ai_modules/__init__.py</code> with thread lock — correct pattern</li>
+    <li><strong>Provider state management</strong> — appropriate for project scale, no need to change</li>
+    <li><strong>Voice-first design</strong> — every screen announces itself, consistent throughout</li>
+    <li><strong>SQLite dual-layer</strong> — backend (Flask) + mobile (sqflite) — correct for offline support</li>
+    <li><strong>IBM Design System</strong> colors applied consistently via AppTheme</li>
+    <li><strong>Semantics labels</strong> on interactive widgets — accessibility-correct</li>
+    <li><strong>FrameConverter + DetectionService refactor</strong> (Task 2) — camera pipeline now production-ready</li>
+  </ul>
+
+  <h3>Architecture Layer Assessment</h3>
+  <table>
+    <tr><th>Layer</th><th>Flutter Status</th><th>Backend Status</th></tr>
+    <tr><td>Presentation</td><td><span class="badge b-yellow">Monolithic</span> — logic mixed into screens</td><td><span class="badge b-green">Good</span> — routes are thin controllers</td></tr>
+    <tr><td>Domain / Business Logic</td><td><span class="badge b-red">Missing</span> — no use-case layer</td><td><span class="badge b-yellow">Partial</span> — logic in routes, not service layer</td></tr>
+    <tr><td>Data / Repository</td><td><span class="badge b-yellow">Partial</span> — ApiService + DatabaseService exist but no repository pattern</td><td><span class="badge b-red">Missing</span> — DB ops directly in routes</td></tr>
+    <tr><td>Configuration</td><td><span class="badge b-red">Hardcoded</span> — base URL in 2 files</td><td><span class="badge b-yellow">Partial</span> — .env exists but config/ dir empty</td></tr>
+    <tr><td>Error Handling</td><td><span class="badge b-yellow">Basic</span> — try/catch present but no typed errors</td><td><span class="badge b-yellow">Basic</span> — generic exceptions, no structured responses</td></tr>
+    <tr><td>Security</td><td><span class="badge b-red">Risk</span> — ORS key in Flutter, base URL hardcoded</td><td><span class="badge b-yellow">Partial</span> — .env used but no input validation middleware</td></tr>
+    <tr><td>Testing</td><td><span class="badge b-red">None</span> — test/ dir empty</td><td><span class="badge b-red">Minimal</span> — test_backend.py exists (contents unknown)</td></tr>
+  </table>
+</div>
+
+
+<h2 class="red"><span class="num">3</span> All Problems Identified (Severity-Ordered)</h2>
+<div class="card">
+
+  <h3>Critical — Correctness / Security</h3>
+
+  <div class="problem">
+    <div class="pnum">C1</div>
+    <div class="ptxt">
+      <strong>ORS API Key Hardcoded in Flutter Dart Code</strong>
+      <span>In <code>navigation_service.dart</code>: <code>String.fromEnvironment('ORS_API_KEY', defaultValue: 'YOUR_ORS_API_KEY')</code> — this embeds the key in the compiled APK binary. String.fromEnvironment is a compile-time constant; it does not read runtime environment variables on mobile. The default literal string ships in every release APK.</span>
+    </div>
+  </div>
+
+  <div class="problem">
+    <div class="pnum">C2</div>
+    <div class="ptxt">
+      <strong>Backend URL Duplicated in Two Flutter Files</strong>
+      <span><code>api_service.dart</code> line 9 and <code>detection_service.dart</code> have separate hardcoded <code>http://10.0.2.2:5000</code>. Changing servers requires editing multiple files. No central config constant exists.</span>
+    </div>
+  </div>
+
+  <div class="problem">
+    <div class="pnum">C3</div>
+    <div class="ptxt">
+      <strong>SplashScreen First-Launch Check is a Stub</strong>
+      <span><code>_checkFirstLaunch()</code> always returns <code>true</code> — every app launch shows onboarding. The SharedPreferences key set by <code>AppProvider.setFirstLaunchComplete()</code> is never consulted here.</span>
+    </div>
+  </div>
+
+  <div class="problem">
+    <div class="pnum">C4</div>
+    <div class="ptxt">
+      <strong>OCR / Scene / Currency Screens Initialize Camera Independently</strong>
+      <span><code>ocr_screen.dart</code>, <code>scene_description_screen.dart</code>, and <code>currency_screen.dart</code> each call <code>context.read&lt;CameraProvider&gt;().initializeCameras()</code> in their own <code>initState</code>. If any screen is pushed while another has the camera open, it calls initialize again on an already-initialized controller, risking a platform exception.</span>
+    </div>
+  </div>
+
+  <div class="problem">
+    <div class="pnum">C5</div>
+    <div class="ptxt">
+      <strong>OCR Screen dispose() Calls stopImageStream() Unnecessarily</strong>
+      <span><code>ocr_screen.dart</code> calls <code>stopImageStream()</code> in dispose but OCR never starts a stream — it uses <code>takePicture()</code>. This is a no-op but reveals the screen doesn't understand camera state, which will cause bugs when CameraProvider is shared between screens simultaneously.</span>
+    </div>
+  </div>
+
+  <div class="problem">
+    <div class="pnum">C6</div>
+    <div class="ptxt">
+      <strong>NavigationService Calls ORS Directly from Flutter</strong>
+      <span>All routing logic (Nominatim geocoding + ORS call) is implemented in Flutter's <code>navigation_service.dart</code> AND again in Flask's <code>navigation_routes.py</code>. Two completely separate implementations of the same feature. API keys, error handling, and parsing are duplicated. The Flask backend is bypassed for Flutter's navigation path.</span>
+    </div>
+  </div>
+
+  <h3>High — Architecture / Maintainability</h3>
+
+  <div class="problem">
+    <div class="pnum warn">H1</div>
+    <div class="ptxt">
+      <strong>No Clean Architecture Separation (Flutter)</strong>
+      <span>Business logic lives directly inside screen State classes. Example: <code>_sendSOS()</code> in <code>sos_screen.dart</code> handles GPS permission, location fetch, SMS construction, URL launching, and Share sheet — all in one method inside a Widget. This makes testing impossible and logic unreusable.</span>
+    </div>
+  </div>
+
+  <div class="problem">
+    <div class="pnum warn">H2</div>
+    <div class="ptxt">
+      <strong>No Service Layer on Flask Backend</strong>
+      <span>AI processing logic lives directly inside route functions. <code>detection_routes.py</code> calls <code>get_yolo_model()</code>, runs inference, formats response, and saves to DB — all in a single route function. No service layer means these cannot be unit tested, reused, or independently scaled.</span>
+    </div>
+  </div>
+
+  <div class="problem">
+    <div class="pnum warn">H3</div>
+    <div class="ptxt">
+      <strong>No Structured API Error Responses</strong>
+      <span>Error responses are inconsistent across endpoints. Some return <code>{"error": "..."}</code>, others return HTTP 500 with a Python traceback. No standard envelope (e.g. <code>{"success": false, "error": {"code": ..., "message": ...}}</code>) exists. Flutter screens do unguarded dict access on error responses.</span>
+    </div>
+  </div>
+
+  <div class="problem">
+    <div class="pnum warn">H4</div>
+    <div class="ptxt">
+      <strong>VoiceFAB Uses String-Matching Command Routing</strong>
+      <span><code>voice_fab.dart</code> does plain <code>command.contains('object')</code> matching. "I want to detect objects near the road" would match, but so would unrelated speech. No intent parser. Tamil voice commands are listed as supported in README but not implemented here.</span>
+    </div>
+  </div>
+
+  <div class="problem">
+    <div class="pnum warn">H5</div>
+    <div class="ptxt">
+      <strong>SettingsScreen TextField Uses Ephemeral Controller Without Dispose</strong>
+      <span><code>settings_screen.dart</code> line 222 creates a <code>TextEditingController</code> inside <code>build()</code>: <code>TextEditingController(text: appProvider.emergencyContact)</code>. This creates a new controller on every rebuild, leaking the old one. The controller is never disposed.</span>
+    </div>
+  </div>
+
+  <div class="problem">
+    <div class="pnum warn">H6</div>
+    <div class="ptxt">
+      <strong>No Feature Folder Structure (Flutter)</strong>
+      <span>All screens, services, models, and providers are flat in their respective directories. The Master Prompt requires a feature-based structure (<code>features/object_detection/</code>, <code>features/navigation/</code> etc.) for scalability and independent team work.</span>
+    </div>
+  </div>
+
+  <div class="problem">
+    <div class="pnum warn">H7</div>
+    <div class="ptxt">
+      <strong>Backend config/ Directory Is Empty</strong>
+      <span>The <code>backend/config/</code> directory exists but is empty. All configuration (API keys, model paths, debug mode, port) is loaded directly from <code>os.getenv()</code> scattered across 6 files. No central settings class. No environment validation on startup.</span>
+    </div>
+  </div>
+
+  <div class="problem">
+    <div class="pnum warn">H8</div>
+    <div class="ptxt">
+      <strong>No Input Validation on Flask Endpoints</strong>
+      <span>No middleware validates file size, MIME type, or JSON schema before reaching route handlers. A malformed request (e.g., a text file uploaded as 'image') goes straight into the AI pipeline and produces an uninformative 500 error.</span>
+    </div>
+  </div>
+
+  <h3>Medium — UX / Completeness</h3>
+
+  <div class="problem">
+    <div class="pnum info">M1</div>
+    <div class="ptxt">
+      <strong>DetectionResult.voiceMessage Misses "close" Position</strong>
+      <span>The model's <code>voiceMessage</code> getter has a <code>case 'close':</code> branch, but <code>compute_position()</code> in <code>image_utils.py</code> never returns <code>"close"</code> — it only returns "left", "ahead", or "right". The proximity/danger concept is never surfaced to the user.</span>
+    </div>
+  </div>
+
+  <div class="problem">
+    <div class="pnum info">M2</div>
+    <div class="ptxt">
+      <strong>CurrencyScreen Contains Voice Map Duplicated from Backend</strong>
+      <span><code>currency_screen.dart</code> has a <code>_currencyVoice</code> map with denomination strings that are identical to <code>DENOMINATION_VOICE</code> in <code>currency_routes.py</code>. The backend already returns <code>voice_message</code> — the Flutter screen should use it directly instead of maintaining its own copy.</span>
+    </div>
+  </div>
+
+  <div class="problem">
+    <div class="pnum info">M3</div>
+    <div class="ptxt">
+      <strong>No Loading / Empty / Error State Pattern</strong>
+      <span>Screens show different loading UI patterns: some use <code>CircularProgressIndicator</code>, some disable buttons, some show nothing. No shared <code>LoadingWidget</code>, <code>EmptyState</code>, or <code>ErrorCard</code> component exists. The Master Prompt explicitly requires all four states per screen.</span>
+    </div>
+  </div>
+
+  <div class="problem">
+    <div class="pnum info">M4</div>
+    <div class="ptxt">
+      <strong>Tamil Language Not Implemented in Voice Commands</strong>
+      <span>README and Master Prompt list Tamil as supported. SettingsScreen includes <code>ta-IN</code> in the language dropdown. But <code>VoiceProvider.startListening()</code> hardcodes <code>localeId: 'en_IN'</code> regardless of the user's selected language.</span>
+    </div>
+  </div>
+
+  <div class="problem">
+    <div class="pnum info">M5</div>
+    <div class="ptxt">
+      <strong>YOLOv8 TorchScript Model Not Used</strong>
+      <span><code>yolov8n.torchscript</code> is present in the project root. Analysis (Task 1) confirmed it provides ~1.4× faster inference on CPU. The <code>ai_modules/__init__.py</code> loads the <code>.pt</code> format. The torchscript path is referenced in <code>.env.example</code> but the loader ignores it.</span>
+    </div>
+  </div>
+</div>
+
+
+<h2 class="green"><span class="num">4</span> Target Enterprise Architecture</h2>
+<div class="card">
+  <h3>Flutter — Target Feature Structure</h3>
+  <div class="grid2">
+    <div class="box">
+      <div class="box-title">lib/core/ (shared infrastructure)</div>
+      <ul>
+        <li><code>core/config/app_config.dart</code> — single source: base URL, timeouts</li>
+        <li><code>core/errors/app_exception.dart</code> — typed exceptions hierarchy</li>
+        <li><code>core/network/api_client.dart</code> — single HTTP client (replaces 2 hardcoded instances)</li>
+        <li><code>core/constants/app_constants.dart</code> — voice gap, throttle intervals</li>
+        <li><code>core/utils/</code> — FrameConverter moved here</li>
+      </ul>
+    </div>
+    <div class="box">
+      <div class="box-title">lib/features/ (one folder per feature)</div>
+      <ul>
+        <li><code>features/camera/</code> — CameraProvider, CameraScreen</li>
+        <li><code>features/object_detection/</code> — DetectionService, DetectionResult</li>
+        <li><code>features/ocr/</code> — OCRService, OCRScreen</li>
+        <li><code>features/currency/</code> — CurrencyService, CurrencyScreen</li>
+        <li><code>features/navigation/</code> — NavigationService, NavigationScreen, RouteResult</li>
+        <li><code>features/scene/</code> — SceneService, SceneDescriptionScreen</li>
+        <li><code>features/sos/</code> — SOSService, SOSScreen</li>
+        <li><code>features/voice/</code> — VoiceProvider, VoiceFAB</li>
+        <li><code>features/settings/</code> — AppProvider, SettingsScreen</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Flask Backend — Target Structure</h3>
+  <div class="grid2">
+    <div class="box">
+      <div class="box-title">app/config/ (new)</div>
+      <ul>
+        <li><code>settings.py</code> — Settings class reading from .env with validation</li>
+        <li><code>logging_config.py</code> — structured logging setup</li>
+      </ul>
+    </div>
+    <div class="box">
+      <div class="box-title">app/services/ (new layer)</div>
+      <ul>
+        <li><code>detection_service.py</code> — YOLO + MediaPipe logic extracted from routes</li>
+        <li><code>ocr_service.py</code> — EasyOCR pipeline</li>
+        <li><code>scene_service.py</code> — Gemini scene logic</li>
+        <li><code>currency_service.py</code> — currency pipeline</li>
+        <li><code>navigation_service.py</code> — Nominatim + ORS (single source)</li>
+      </ul>
+    </div>
+    <div class="box">
+      <div class="box-title">app/middleware/ (new)</div>
+      <ul>
+        <li><code>error_handler.py</code> — global error handler, standard envelope</li>
+        <li><code>request_validator.py</code> — image MIME + size validation</li>
+      </ul>
+    </div>
+    <div class="box">
+      <div class="box-title">app/schemas/ (new)</div>
+      <ul>
+        <li>Request/response Pydantic schemas for API documentation and validation</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<h2 class="purple"><span class="num">5</span> 11-Module Implementation Plan</h2>
+<div class="card">
+  <p>Modules are ordered by dependency: later modules rely on earlier ones being solid. Each module STOPS for confirmation before the next begins.</p>
+
+  <div class="module done">
+    <div class="module-title"><span class="badge b-green">DONE</span> Module 0 — Camera Pipeline Fix (Task 2)</div>
+    <div class="module-desc">YUV420→JPEG FrameConverter, token-bucket DetectionService, CameraProvider fix, backend decode_image_safe. All complete and confirmed.</div>
+  </div>
+
+  <div class="module active">
+    <div class="module-title"><span class="badge b-yellow">NEXT</span> Module 1 — Core Infrastructure &amp; Configuration</div>
+    <div class="module-desc">
+      Flutter: <code>core/config/app_config.dart</code> (single base URL constant), <code>core/errors/app_exception.dart</code> (typed exception hierarchy), fix SettingsScreen TextEditingController leak, fix SplashScreen first-launch check.<br />
+      Backend: <code>app/config/settings.py</code> (Settings class), <code>app/middleware/error_handler.py</code> (standard response envelope), <code>app/middleware/request_validator.py</code> (image validation).
+    </div>
+  </div>
+
+  <div class="module">
+    <div class="module-title"><span class="badge b-gray">PENDING</span> Module 2 — Backend Service Layer</div>
+    <div class="module-desc">Extract business logic from all 5 route files into dedicated service classes. Routes become thin controllers. Add Pydantic response schemas. Unit-testable detection_service.py, ocr_service.py, navigation_service.py.</div>
+  </div>
+
+  <div class="module">
+    <div class="module-title"><span class="badge b-gray">PENDING</span> Module 3 — Flutter Feature Architecture</div>
+    <div class="module-desc">Reorganise lib/ into features/ structure. Move files to their feature folders without changing behaviour. Fix C4 (camera double-init), fix C5 (OCR dispose), centralise HTTP client, remove duplicate ORS key from Flutter.</div>
+  </div>
+
+  <div class="module">
+    <div class="module-title"><span class="badge b-gray">PENDING</span> Module 4 — AI Services Enhancement</div>
+    <div class="module-desc">Switch YOLO to TorchScript (.torchscript already present). Add obstacle proximity scoring ("close" zone). Add confidence thresholds per detection class. Add Gemini retry mechanism and prompt caching. Improve scene description prompt for blind-user context.</div>
+  </div>
+
+  <div class="module">
+    <div class="module-title"><span class="badge b-gray">PENDING</span> Module 5 — OCR Enhancement</div>
+    <div class="module-desc">Image preprocessing pipeline before EasyOCR (contrast, deskew). Structured text block output with reading order. Add confidence filtering. Flutter OCRScreen: fix camera state bug, add "read continuously" toggle, Tamil/Hindi voice output.</div>
+  </div>
+
+  <div class="module">
+    <div class="module-title"><span class="badge b-gray">PENDING</span> Module 6 — Navigation Unification &amp; Safety</div>
+    <div class="module-desc">Remove duplicate routing logic from Flutter. NavigationService routes all calls through Flask backend. Add route safety scoring. Add pedestrian preference options to ORS. Wire obstacle detection into navigation (camera frame → alert during walk). Google Maps integration.</div>
+  </div>
+
+  <div class="module">
+    <div class="module-title"><span class="badge b-gray">PENDING</span> Module 7 — Voice Assistant &amp; Tamil Support</div>
+    <div class="module-desc">Fix localeId to use AppProvider.language. Add Tamil keyword routing in VoiceFAB. Add intent-based command parser (replaces string.contains). Implement TTS priority queue (URGENT/NAVIGATION/AMBIENT). Add "repeat last" and "what did you say" commands.</div>
+  </div>
+
+  <div class="module">
+    <div class="module-title"><span class="badge b-gray">PENDING</span> Module 8 — Nearby Places &amp; Shop Recognition</div>
+    <div class="module-desc">New Flask blueprint: /api/places/nearby (Google Places or OSM Overpass). New Flutter screen: NearbyPlacesScreen. Shop recognition pipeline: OCR + YOLO + places cross-reference. Voice: "You are in front of Apollo Pharmacy".</div>
+  </div>
+
+  <div class="module">
+    <div class="module-title"><span class="badge b-gray">PENDING</span> Module 9 — Sign Language Recognition</div>
+    <div class="module-desc">Continuous gesture pipeline (not single-frame). MediaPipe hand landmarks + sequence analysis. Gesture → word → sentence building. Two-way: user signs → text/speech, AND text/speech → suggested sign guide.</div>
+  </div>
+
+  <div class="module">
+    <div class="module-title"><span class="badge b-gray">PENDING</span> Module 10 — AI Companion &amp; Conversation Mode</div>
+    <div class="module-desc">Unified AI chat interface. Gemini 1.5 Flash with function-calling. Single voice entry point routes to all tools automatically. Session history. "Take me to the nearest hospital", "What is in front of me?", "Read this menu" — all answered through one interface.</div>
+  </div>
+
+  <div class="module">
+    <div class="module-title"><span class="badge b-gray">PENDING</span> Module 11 — Production Readiness</div>
+    <div class="module-desc">Unit tests for all services. API integration tests. Performance profiling. Security audit. Rate limiting on Flask. Logging middleware. Build flavors (dev/prod). README update. Final production checklist validation.</div>
+  </div>
+</div>
+
+
+<h2 class="blue"><span class="num">6</span> Module 1 — Exact File Scope (Ready to Implement)</h2>
+<div class="card">
+  <h3>Flutter — 3 Files to Modify, 2 New Files</h3>
+  <table>
+    <tr><th>File</th><th>Change</th><th>Fixes</th></tr>
+    <tr><td><code>lib/core/config/app_config.dart</code> <span class="badge b-green">NEW</span></td><td>Single <code>AppConfig</code> class: <code>baseUrl</code>, <code>requestTimeout</code>, <code>voiceGapMs</code>, <code>inferenceIntervals</code></td><td>C2 — duplicate URLs</td></tr>
+    <tr><td><code>lib/core/errors/app_exception.dart</code> <span class="badge b-green">NEW</span></td><td>Typed exception hierarchy: <code>NetworkException</code>, <code>CameraException</code>, <code>ApiException</code>, <code>PermissionException</code></td><td>H3 — no typed errors</td></tr>
+    <tr><td><code>lib/screens/splash_screen.dart</code> <span class="badge b-yellow">MODIFY</span></td><td>Fix <code>_checkFirstLaunch()</code> to actually read SharedPreferences key</td><td>C3 — always shows onboarding</td></tr>
+    <tr><td><code>lib/screens/settings_screen.dart</code> <span class="badge b-yellow">MODIFY</span></td><td>Extract TextEditingController to StatefulWidget, add dispose(), fix rebuild leak</td><td>H5 — controller leak</td></tr>
+    <tr><td><code>lib/services/api_service.dart</code> <span class="badge b-yellow">MODIFY</span></td><td>Import <code>AppConfig.baseUrl</code> instead of hardcoded string</td><td>C2 — duplicate URLs</td></tr>
+    <tr><td><code>lib/services/detection_service.dart</code> <span class="badge b-yellow">MODIFY</span></td><td>Import <code>AppConfig.baseUrl</code> instead of hardcoded string</td><td>C2 — duplicate URLs</td></tr>
+  </table>
+
+  <h3>Backend — 2 New Files, 1 Modified</h3>
+  <table>
+    <tr><th>File</th><th>Change</th><th>Fixes</th></tr>
+    <tr><td><code>backend/config/settings.py</code> <span class="badge b-green">NEW</span></td><td>Settings dataclass reading all .env values with type validation and startup assertion</td><td>H7 — empty config dir</td></tr>
+    <tr><td><code>backend/middleware/error_handler.py</code> <span class="badge b-green">NEW</span></td><td>Flask error handler: standard <code>{"success", "error": {"code", "message"}}</code> envelope for all exceptions</td><td>H3 — inconsistent errors</td></tr>
+    <tr><td><code>backend/app.py</code> <span class="badge b-yellow">MODIFY</span></td><td>Register error handler, import Settings, add startup validation log</td><td>H7, H3</td></tr>
+  </table>
+
+  <p><strong>Scope contract:</strong> Module 1 touches zero AI logic, zero detection routes, zero existing screens beyond splash and settings. It is pure infrastructure — safe, non-breaking, and maximally high-leverage.</p>
+</div>
+
+<footer>Made with IBM Bob</footer>
+</div>
+</body>
+</html>

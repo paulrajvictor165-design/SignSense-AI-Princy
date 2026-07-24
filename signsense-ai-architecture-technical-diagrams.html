@@ -1,0 +1,403 @@
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>SignSense AI — Architecture Diagrams</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,"Segoe UI",system-ui,sans-serif;background:#f4f4f4;color:#1f2328;font-size:14px;line-height:1.6}
+  .page{max-width:860px;margin:0 auto;padding:32px 24px}
+
+  /* Header */
+  .hero{background:#0f62fe;color:#fff;padding:32px;border-radius:8px;margin-bottom:28px;position:relative;overflow:hidden}
+  .hero::after{content:'';position:absolute;right:-40px;top:-40px;width:200px;height:200px;background:rgba(255,255,255,.06);border-radius:50%}
+  .hero h1{font-size:28px;font-weight:700;margin-bottom:6px}
+  .hero p{opacity:.85;font-size:15px}
+  .badge{display:inline-block;padding:3px 10px;background:rgba(255,255,255,.2);border-radius:20px;font-size:11px;font-weight:600;margin-top:10px;margin-right:6px}
+
+  /* Section */
+  h2{font-size:18px;font-weight:700;color:#0f62fe;margin:28px 0 14px;padding-bottom:6px;border-bottom:2px solid #e5e7eb}
+  h3{font-size:14px;font-weight:600;color:#1f2328;margin:16px 0 8px}
+
+  /* Architecture Box */
+  .arch{background:#fff;border-radius:8px;border:1px solid #e5e7eb;padding:20px;margin-bottom:20px}
+
+  /* SVG Diagram */
+  svg{width:100%;height:auto}
+
+  /* Feature grid */
+  .feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+  .feat{background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:14px;border-top:3px solid var(--c)}
+  .feat .icon{font-size:22px;margin-bottom:6px}
+  .feat .name{font-weight:700;font-size:13px}
+  .feat .tech{color:#57606a;font-size:11px;margin-top:3px}
+
+  /* Table */
+  table{width:100%;border-collapse:collapse;margin-bottom:20px;background:#fff;border-radius:8px;overflow:hidden;border:1px solid #e5e7eb}
+  th{background:#f0f4ff;color:#0f62fe;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;padding:10px 12px;text-align:left}
+  td{padding:9px 12px;border-top:1px solid #f0f0f0;font-size:13px}
+  tr:hover td{background:#fafafa}
+
+  /* Flow diagram */
+  .flow{display:flex;align-items:center;gap:0;flex-wrap:wrap;margin:12px 0}
+  .flow-step{background:#0f62fe;color:#fff;padding:8px 14px;border-radius:4px;font-size:12px;font-weight:600;white-space:nowrap}
+  .flow-arrow{color:#0f62fe;font-size:18px;margin:0 6px;font-weight:bold}
+
+  /* API card */
+  .api-card{background:#fff;border:1px solid #e5e7eb;border-radius:6px;margin-bottom:12px;overflow:hidden}
+  .api-header{display:flex;align-items:center;gap:10px;padding:10px 14px;background:#f7f8fa}
+  .method{background:#0f62fe;color:#fff;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:700;font-family:monospace}
+  .method.post{background:#24a148}
+  .endpoint{font-family:monospace;font-size:13px;font-weight:600}
+  .api-body{padding:10px 14px;font-size:12px;color:#57606a}
+
+  /* Sequence diagram */
+  .seq{overflow-x:auto}
+
+  code{background:#f4f4f4;padding:1px 5px;border-radius:3px;font-family:monospace;font-size:12px}
+  .tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;margin-right:4px}
+  .tag.blue{background:#ddeeff;color:#0043ce}
+  .tag.green{background:#defce8;color:#198038}
+  .tag.yellow{background:#fdf3d8;color:#b28600}
+  .tag.red{background:#ffe0e0;color:#a2191f}
+
+  footer{text-align:center;margin-top:40px;padding-top:16px;border-top:1px solid #e5e7eb;color:#57606a;font-size:12px}
+</style>
+</head>
+<body>
+<div class="page">
+
+  
+  <div class="hero">
+    <h1>👁️ SignSense AI</h1>
+    <p>Universal Accessibility Assistant — Architecture &amp; Technical Documentation</p>
+    <div>
+      <span class="badge">IBM SkillsBuild</span>
+      <span class="badge">Flutter + Python Flask</span>
+      <span class="badge">YOLOv8 + Gemini AI</span>
+      <span class="badge">Free APIs Only</span>
+    </div>
+  </div>
+
+  
+  <h2>🏗️ System Architecture</h2>
+  <div class="arch">
+    <svg xmlns="http://www.w3.org/2000/svg">
+      
+      <rect x="10" y="10" width="240" height="360" rx="10" fill="#eef4ff" stroke="#0f62fe" stroke-width="1.5"></rect>
+      <rect x="280" y="10" width="240" height="360" rx="10" fill="#edfce8" stroke="#24a148" stroke-width="1.5"></rect>
+      <rect x="550" y="10" width="240" height="360" rx="10" fill="#fff8e8" stroke="#f1c21b" stroke-width="1.5"></rect>
+
+      
+      <text x="130" y="32" text-anchor="middle" font-size="13" font-weight="700" fill="#0f62fe">Flutter Mobile App</text>
+      <text x="400" y="32" text-anchor="middle" font-size="13" font-weight="700" fill="#24a148">Python Flask Backend</text>
+      <text x="670" y="32" text-anchor="middle" font-size="13" font-weight="700" fill="#b28600">External Services</text>
+
+      
+      <rect x="30" y="45" width="200" height="34" rx="4" fill="#0f62fe"></rect>
+      <text x="130" y="67" text-anchor="middle" font-size="11" fill="white" font-weight="600">main.dart + Providers</text>
+
+      <rect x="30" y="90" width="95" height="28" rx="4" fill="#fff" stroke="#0f62fe" stroke-width="1"></rect>
+      <text x="77" y="109" text-anchor="middle" font-size="10" fill="#0f62fe" font-weight="600">CameraScreen</text>
+
+      <rect x="135" y="90" width="95" height="28" rx="4" fill="#fff" stroke="#0f62fe" stroke-width="1"></rect>
+      <text x="182" y="109" text-anchor="middle" font-size="10" fill="#0f62fe" font-weight="600">OCR Screen</text>
+
+      <rect x="30" y="130" width="95" height="28" rx="4" fill="#fff" stroke="#0f62fe" stroke-width="1"></rect>
+      <text x="77" y="149" text-anchor="middle" font-size="10" fill="#0f62fe" font-weight="600">NavigationScr</text>
+
+      <rect x="135" y="130" width="95" height="28" rx="4" fill="#fff" stroke="#0f62fe" stroke-width="1"></rect>
+      <text x="182" y="149" text-anchor="middle" font-size="10" fill="#0f62fe" font-weight="600">Scene Desc.</text>
+
+      <rect x="30" y="170" width="95" height="28" rx="4" fill="#fff" stroke="#0f62fe" stroke-width="1"></rect>
+      <text x="77" y="189" text-anchor="middle" font-size="10" fill="#0f62fe" font-weight="600">Currency Scr</text>
+
+      <rect x="135" y="170" width="95" height="28" rx="4" fill="#fff" stroke="#0f62fe" stroke-width="1"></rect>
+      <text x="182" y="189" text-anchor="middle" font-size="10" fill="#0f62fe" font-weight="600">SOS Screen</text>
+
+      <rect x="30" y="215" width="200" height="28" rx="4" fill="#ddeeff" stroke="#0043ce" stroke-width="1"></rect>
+      <text x="130" y="234" text-anchor="middle" font-size="10" fill="#0043ce" font-weight="600">VoiceProvider (flutter_tts)</text>
+
+      <rect x="30" y="255" width="95" height="28" rx="4" fill="#ddeeff" stroke="#0043ce" stroke-width="1"></rect>
+      <text x="77" y="274" text-anchor="middle" font-size="10" fill="#0043ce" font-weight="600">ApiService</text>
+
+      <rect x="135" y="255" width="95" height="28" rx="4" fill="#ddeeff" stroke="#0043ce" stroke-width="1"></rect>
+      <text x="182" y="274" text-anchor="middle" font-size="10" fill="#0043ce" font-weight="600">DB (sqflite)</text>
+
+      <rect x="30" y="295" width="200" height="28" rx="4" fill="#ddeeff" stroke="#0043ce" stroke-width="1"></rect>
+      <text x="130" y="314" text-anchor="middle" font-size="10" fill="#0043ce" font-weight="600">SpeechToText (Voice Cmds)</text>
+
+      
+      <line x1="230" y1="200" x2="280" y2="200" stroke="#0f62fe" stroke-width="2" marker-end="url(#arr)"></line>
+      <text x="254" y="195" text-anchor="middle" font-size="8" fill="#0f62fe">REST</text>
+
+      
+      <rect x="300" y="45" width="200" height="34" rx="4" fill="#24a148"></rect>
+      <text x="400" y="67" text-anchor="middle" font-size="11" fill="white" font-weight="600">Flask App + CORS</text>
+
+      <rect x="300" y="90" width="95" height="28" rx="4" fill="#fff" stroke="#24a148" stroke-width="1"></rect>
+      <text x="347" y="109" text-anchor="middle" font-size="10" fill="#24a148" font-weight="600">/detect/objects</text>
+
+      <rect x="405" y="90" width="95" height="28" rx="4" fill="#fff" stroke="#24a148" stroke-width="1"></rect>
+      <text x="452" y="109" text-anchor="middle" font-size="10" fill="#24a148" font-weight="600">/ocr/read</text>
+
+      <rect x="300" y="130" width="95" height="28" rx="4" fill="#fff" stroke="#24a148" stroke-width="1"></rect>
+      <text x="347" y="149" text-anchor="middle" font-size="10" fill="#24a148" font-weight="600">/scene/describe</text>
+
+      <rect x="405" y="130" width="95" height="28" rx="4" fill="#fff" stroke="#24a148" stroke-width="1"></rect>
+      <text x="452" y="149" text-anchor="middle" font-size="10" fill="#24a148" font-weight="600">/currency/detect</text>
+
+      <rect x="300" y="170" width="200" height="28" rx="4" fill="#fff" stroke="#24a148" stroke-width="1"></rect>
+      <text x="400" y="189" text-anchor="middle" font-size="10" fill="#24a148" font-weight="600">/navigation/route</text>
+
+      <rect x="300" y="215" width="95" height="28" rx="4" fill="#defce8" stroke="#24a148" stroke-width="1"></rect>
+      <text x="347" y="234" text-anchor="middle" font-size="10" fill="#198038" font-weight="600">YOLOv8</text>
+
+      <rect x="405" y="215" width="95" height="28" rx="4" fill="#defce8" stroke="#24a148" stroke-width="1"></rect>
+      <text x="452" y="234" text-anchor="middle" font-size="10" fill="#198038" font-weight="600">EasyOCR</text>
+
+      <rect x="300" y="255" width="95" height="28" rx="4" fill="#defce8" stroke="#24a148" stroke-width="1"></rect>
+      <text x="347" y="274" text-anchor="middle" font-size="10" fill="#198038" font-weight="600">MediaPipe</text>
+
+      <rect x="405" y="255" width="95" height="28" rx="4" fill="#defce8" stroke="#24a148" stroke-width="1"></rect>
+      <text x="452" y="274" text-anchor="middle" font-size="10" fill="#198038" font-weight="600">OpenCV</text>
+
+      <rect x="300" y="295" width="200" height="28" rx="4" fill="#defce8" stroke="#24a148" stroke-width="1"></rect>
+      <text x="400" y="314" text-anchor="middle" font-size="10" fill="#198038" font-weight="600">SQLite Database</text>
+
+      
+      <line x1="500" y1="200" x2="550" y2="200" stroke="#24a148" stroke-width="2" marker-end="url(#arr2)"></line>
+
+      
+      <rect x="570" y="45" width="200" height="34" rx="4" fill="#f1c21b"></rect>
+      <text x="670" y="67" text-anchor="middle" font-size="11" fill="#1a1a1a" font-weight="600">External Free APIs</text>
+
+      <rect x="570" y="90" width="200" height="40" rx="4" fill="#fff" stroke="#f1c21b" stroke-width="1"></rect>
+      <text x="670" y="108" text-anchor="middle" font-size="11" fill="#b28600" font-weight="600">Google Gemini 1.5 Flash</text>
+      <text x="670" y="122" text-anchor="middle" font-size="9" fill="#57606a">Scene Desc. + Currency</text>
+
+      <rect x="570" y="142" width="200" height="40" rx="4" fill="#fff" stroke="#f1c21b" stroke-width="1"></rect>
+      <text x="670" y="160" text-anchor="middle" font-size="11" fill="#b28600" font-weight="600">OpenRouteService</text>
+      <text x="670" y="174" text-anchor="middle" font-size="9" fill="#57606a">Walking navigation routes</text>
+
+      <rect x="570" y="194" width="200" height="40" rx="4" fill="#fff" stroke="#f1c21b" stroke-width="1"></rect>
+      <text x="670" y="212" text-anchor="middle" font-size="11" fill="#b28600" font-weight="600">Nominatim / OSM</text>
+      <text x="670" y="226" text-anchor="middle" font-size="9" fill="#57606a">Geocoding + Map tiles</text>
+
+      <rect x="570" y="246" width="200" height="40" rx="4" fill="#fff" stroke="#f1c21b" stroke-width="1"></rect>
+      <text x="670" y="264" text-anchor="middle" font-size="11" fill="#b28600" font-weight="600">Geolocator (Device)</text>
+      <text x="670" y="278" text-anchor="middle" font-size="9" fill="#57606a">GPS location for SOS</text>
+
+      
+      <defs>
+        <marker id="arr">
+          <path d="M0,0 L0,6 L8,3 z" fill="#0f62fe"></path>
+        </marker>
+        <marker id="arr2">
+          <path d="M0,0 L0,6 L8,3 z" fill="#24a148"></path>
+        </marker>
+      </defs>
+    </svg>
+  </div>
+
+  
+  <h2>✨ Feature Map</h2>
+  <div class="feat-grid">
+    <div class="feat" style="--c:#0f62fe">
+      <div class="icon">🎯</div>
+      <div class="name">Object Detection</div>
+      <div class="tech">YOLOv8n · 80+ classes · Real-time</div>
+    </div>
+    <div class="feat" style="--c:#24a148">
+      <div class="icon">🚦</div>
+      <div class="name">Traffic Detection</div>
+      <div class="tech">YOLOv8 + HSV analysis · Red/Yellow/Green</div>
+    </div>
+    <div class="feat" style="--c:#a2191f">
+      <div class="icon">🚗</div>
+      <div class="name">Vehicle Detection</div>
+      <div class="tech">YOLOv8 · 5 vehicle types</div>
+    </div>
+    <div class="feat" style="--c:#8a3ffc">
+      <div class="icon">📄</div>
+      <div class="name">OCR Text Reader</div>
+      <div class="tech">EasyOCR · English + Hindi</div>
+    </div>
+    <div class="feat" style="--c:#009d9a">
+      <div class="icon">🌍</div>
+      <div class="name">Scene Description</div>
+      <div class="tech">Gemini 1.5 Flash · Natural language</div>
+    </div>
+    <div class="feat" style="--c:#f1c21b">
+      <div class="icon">💸</div>
+      <div class="name">Currency Detection</div>
+      <div class="tech">Gemini Vision · ₹10–₹2000</div>
+    </div>
+    <div class="feat" style="--c:#0f62fe">
+      <div class="icon">🎨</div>
+      <div class="name">Color Detection</div>
+      <div class="tech">OpenCV HSV · 12 colors</div>
+    </div>
+    <div class="feat" style="--c:#24a148">
+      <div class="icon">🗺️</div>
+      <div class="name">Navigation</div>
+      <div class="tech">ORS + Nominatim + flutter_map</div>
+    </div>
+    <div class="feat" style="--c:#a2191f">
+      <div class="icon">🆘</div>
+      <div class="name">Emergency SOS</div>
+      <div class="tech">Geolocator · SMS · Call 112</div>
+    </div>
+  </div>
+
+  
+  <h2>🔄 Detection Data Flow</h2>
+  <div class="arch">
+    <div class="flow">
+      <span class="flow-step">📸 Camera Frame</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-step">CameraProvider</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-step">DetectionService</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-step">POST /api/detect</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-step">YOLOv8 Inference</span>
+    </div>
+    <div class="flow" style="margin-top:8px">
+      <span class="flow-step">BBox + Labels</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-step">Position Logic</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-step">JSON Response</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-step">DetectionOverlay</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-step">🔊 Voice TTS</span>
+    </div>
+  </div>
+
+  
+  <h2>📡 REST API Reference</h2>
+
+  <div class="api-card">
+    <div class="api-header"><span class="method post">POST</span><span class="endpoint">/api/detect/objects</span><span class="tag blue">Object Detection</span></div>
+    <div class="api-body">Returns detected objects with labels, confidence, position (left/ahead/right), bounding boxes.<br /><b>Response:</b> <code>{"detections":[{"label":"Person","confidence":0.92,"position":"ahead","bbox":{...}}],"voice_message":"Person ahead."}</code></div>
+  </div>
+
+  <div class="api-card">
+    <div class="api-header"><span class="method post">POST</span><span class="endpoint">/api/detect/traffic</span><span class="tag green">Traffic</span></div>
+    <div class="api-body">Detects traffic light color via HSV analysis.<br /><b>Response:</b> <code>{"traffic_light_color":"red","voice_message":"Red signal. Please wait."}</code></div>
+  </div>
+
+  <div class="api-card">
+    <div class="api-header"><span class="method post">POST</span><span class="endpoint">/api/ocr/read</span><span class="tag blue">OCR</span></div>
+    <div class="api-body">EasyOCR text extraction (en, hi) with confidence filtering.<br /><b>Response:</b> <code>{"text":"Extracted text here...","blocks":[...],"voice_message":"..."}</code></div>
+  </div>
+
+  <div class="api-card">
+    <div class="api-header"><span class="method post">POST</span><span class="endpoint">/api/scene/describe</span><span class="tag yellow">Gemini AI</span></div>
+    <div class="api-body">Google Gemini 1.5 Flash scene narration for accessibility.<br /><b>Response:</b> <code>{"description":"You are standing near a road. Two people are walking..."}</code></div>
+  </div>
+
+  <div class="api-card">
+    <div class="api-header"><span class="method post">POST</span><span class="endpoint">/api/currency/detect</span><span class="tag yellow">Currency</span></div>
+    <div class="api-body">Indian Rupee denomination detection via Gemini Vision.<br /><b>Response:</b> <code>{"denomination":500,"currency":"₹500","voice_message":"This is a Five Hundred Rupee note."}</code></div>
+  </div>
+
+  <div class="api-card">
+    <div class="api-header"><span class="method post">POST</span><span class="endpoint">/api/navigation/route</span><span class="tag green">Navigation</span></div>
+    <div class="api-body">Turn-by-turn walking directions via ORS + Nominatim geocoding.<br /><b>Body:</b> <code>{"start_lat":12.9,"start_lng":77.5,"destination":"Indiranagar"}</code></div>
+  </div>
+
+  
+  <h2>📊 Sequence Diagram — Object Detection</h2>
+  <div class="arch seq">
+    <svg xmlns="http://www.w3.org/2000/svg">
+      
+      <line x1="80" y1="60" x2="80" y2="300" stroke="#ccc" stroke-width="1"></line>
+      <line x1="220" y1="60" x2="220" y2="300" stroke="#ccc" stroke-width="1"></line>
+      <line x1="380" y1="60" x2="380" y2="300" stroke="#ccc" stroke-width="1"></line>
+      <line x1="540" y1="60" x2="540" y2="300" stroke="#ccc" stroke-width="1"></line>
+      <line x1="680" y1="60" x2="680" y2="300" stroke="#ccc" stroke-width="1"></line>
+
+      
+      <rect x="30" y="10" width="100" height="32" rx="4" fill="#0f62fe"></rect>
+      <text x="80" y="31" text-anchor="middle" font-size="11" fill="white" font-weight="600">User/Camera</text>
+
+      <rect x="160" y="10" width="120" height="32" rx="4" fill="#0043ce"></rect>
+      <text x="220" y="31" text-anchor="middle" font-size="11" fill="white" font-weight="600">CameraProvider</text>
+
+      <rect x="320" y="10" width="120" height="32" rx="4" fill="#24a148"></rect>
+      <text x="380" y="31" text-anchor="middle" font-size="11" fill="white" font-weight="600">Flask Backend</text>
+
+      <rect x="480" y="10" width="120" height="32" rx="4" fill="#8a3ffc"></rect>
+      <text x="540" y="31" text-anchor="middle" font-size="11" fill="white" font-weight="600">YOLOv8</text>
+
+      <rect x="630" y="10" width="100" height="32" rx="4" fill="#009d9a"></rect>
+      <text x="680" y="31" text-anchor="middle" font-size="11" fill="white" font-weight="600">VoiceTTS</text>
+
+      
+      <line x1="80" y1="80" x2="215" y2="80" stroke="#0f62fe" stroke-width="1.5" marker-end="url(#sb)"></line>
+      <text x="145" y="76" text-anchor="middle" font-size="9" fill="#0f62fe">startImageStream()</text>
+
+      <line x1="220" y1="105" x2="375" y2="105" stroke="#0043ce" stroke-width="1.5" marker-end="url(#sb)"></line>
+      <text x="295" y="101" text-anchor="middle" font-size="9" fill="#0043ce">POST /api/detect/objects</text>
+
+      <line x1="380" y1="130" x2="535" y2="130" stroke="#24a148" stroke-width="1.5" marker-end="url(#sb)"></line>
+      <text x="456" y="126" text-anchor="middle" font-size="9" fill="#24a148">model.predict(img)</text>
+
+      <line x1="535" y1="155" x2="385" y2="155" stroke="#8a3ffc" stroke-width="1.5" marker-end="url(#sb2)"></line>
+      <text x="456" y="151" text-anchor="middle" font-size="9" fill="#8a3ffc">detections + bboxes</text>
+
+      <line x1="375" y1="180" x2="225" y2="180" stroke="#24a148" stroke-width="1.5" marker-end="url(#sb3)"></line>
+      <text x="295" y="176" text-anchor="middle" font-size="9" fill="#24a148">JSON {detections, voice_msg}</text>
+
+      <line x1="215" y1="205" x2="85" y2="205" stroke="#0043ce" stroke-width="1.5" marker-end="url(#sb4)"></line>
+      <text x="145" y="201" text-anchor="middle" font-size="9" fill="#0043ce">setState(detections)</text>
+
+      <line x1="80" y1="230" x2="675" y2="230" stroke="#0f62fe" stroke-width="1.5" marker-end="url(#sb5)"></line>
+      <text x="375" y="226" text-anchor="middle" font-size="9" fill="#0f62fe">speak("Person ahead. Chair on your left.")</text>
+
+      <line x1="80" y1="255" x2="215" y2="255" stroke="#0f62fe" stroke-width="1.5" marker-end="url(#sb)"></line>
+      <text x="145" y="251" text-anchor="middle" font-size="9" fill="#0f62fe">render DetectionOverlay()</text>
+
+      <defs>
+        <marker id="sb"><path d="M0,0 L0,6 L6,3z" fill="#0f62fe"></path></marker>
+        <marker id="sb2"><path d="M0,0 L0,6 L6,3z" fill="#8a3ffc"></path></marker>
+        <marker id="sb3"><path d="M0,0 L0,6 L6,3z" fill="#24a148"></path></marker>
+        <marker id="sb4"><path d="M0,0 L0,6 L6,3z" fill="#0043ce"></path></marker>
+        <marker id="sb5"><path d="M0,0 L0,6 L6,3z" fill="#009d9a"></path></marker>
+      </defs>
+    </svg>
+  </div>
+
+  
+  <h2>🛠️ Technology Stack</h2>
+  <table>
+    <tr><th>Layer</th><th>Technology</th><th>Purpose</th><th>Cost</th></tr>
+    <tr><td>Mobile UI</td><td>Flutter 3.x</td><td>Cross-platform mobile app</td><td><span class="tag green">Free</span></td></tr>
+    <tr><td>State Mgmt</td><td>Provider 6.x</td><td>App, voice, camera state</td><td><span class="tag green">Free</span></td></tr>
+    <tr><td>Text-to-Speech</td><td>flutter_tts</td><td>Voice accessibility output</td><td><span class="tag green">Free</span></td></tr>
+    <tr><td>Voice Input</td><td>speech_to_text</td><td>Hands-free voice commands</td><td><span class="tag green">Free</span></td></tr>
+    <tr><td>Maps</td><td>flutter_map + OSM</td><td>Navigation display</td><td><span class="tag green">Free</span></td></tr>
+    <tr><td>API Server</td><td>Python Flask</td><td>REST backend</td><td><span class="tag green">Free</span></td></tr>
+    <tr><td>Object Detection</td><td>YOLOv8n (Ultralytics)</td><td>Real-time object detection</td><td><span class="tag green">Free</span></td></tr>
+    <tr><td>Text Recognition</td><td>EasyOCR</td><td>Multi-language OCR</td><td><span class="tag green">Free</span></td></tr>
+    <tr><td>Face Detection</td><td>MediaPipe</td><td>Face count + position</td><td><span class="tag green">Free</span></td></tr>
+    <tr><td>Image Processing</td><td>OpenCV</td><td>Color + traffic analysis</td><td><span class="tag green">Free</span></td></tr>
+    <tr><td>Scene AI</td><td>Google Gemini 1.5 Flash</td><td>Natural scene description</td><td><span class="tag green">Free Tier</span></td></tr>
+    <tr><td>Navigation</td><td>OpenRouteService</td><td>Walking directions</td><td><span class="tag green">Free Tier</span></td></tr>
+    <tr><td>Geocoding</td><td>Nominatim / OSM</td><td>Address to coordinates</td><td><span class="tag green">Free</span></td></tr>
+    <tr><td>Database</td><td>SQLite + sqflite</td><td>History storage</td><td><span class="tag green">Free</span></td></tr>
+  </table>
+
+  <footer>
+    <p>SignSense AI — IBM SkillsBuild Hackathon Project | Architecture Document v1.0</p>
+    <p style="margin-top:4px">Made with IBM Bob</p>
+  </footer>
+
+</div>
+</body>
+</html>
