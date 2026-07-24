@@ -7,7 +7,7 @@ numpy==1.26.4
 opencv-python==4.11.0.86
 ultralytics==8.2.87
 easyocr==1.7.1
-mediapipe==0.10.20
+mediapipe==0.10.35
 google-generativeai==0.7.2
 requests==2.32.3
 geopy==2.4.1
