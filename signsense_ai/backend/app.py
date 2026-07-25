@@ -58,9 +58,8 @@ def create_app() -> Flask:
     # ── CORS ──────────────────────────────────────────────────────────────
     # Allow "*" in development; lock down to specific origins in production
     # by setting CORS_ORIGINS in .env.
-    cors_origins = settings.CORS_ORIGINS
-    CORS(app, resources={r"/api/*": {"origins": cors_origins}})
-    logger.info("CORS configured for origins: %s", cors_origins)
+    CORS(app, resources={r"/*": {"origins": "*"}})
+    logger.info("CORS configured for all origins")
 
     # ── Database ──────────────────────────────────────────────────────────
     init_db(app)

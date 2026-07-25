@@ -47,13 +47,8 @@ class AppConfig {
   ///
   /// This is the **only** place the URL is defined.
   /// All services import this constant â€” never hardcode the URL elsewhere.
-  static const String baseUrl = String.fromEnvironment(
-    'BASE_URL',
-    defaultValue: _useEmulator
-        ? 'http://10.0.2.2:5000'
-        : 'http://$_deviceLanIp:5000',
-  );
-
+static const String baseUrl =
+    'https://signsense-ai-princy.onrender.com';  
   // â”€â”€ HTTP timeouts â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   /// Timeout for standard API requests (OCR, Scene, Currency, Navigation).

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
+
 import '../providers/voice_provider.dart';
 import '../providers/app_provider.dart';
 import '../utils/app_theme.dart';
@@ -59,6 +60,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   void initState() {
     super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _speakCurrentPage();
     });
@@ -66,11 +68,19 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   void _speakCurrentPage() {
     if (!mounted) return;
-    context.read<VoiceProvider>().speak(_pages[_currentPage].voiceText);
+
+    context.read<VoiceProvider>().speak(
+          _pages[_currentPage].voiceText,
+        );
   }
 
   void _onPageChanged(int index) {
-    setState(() => _currentPage = index);
+    if (!mounted) return;
+
+    setState(() {
+      _currentPage = index;
+    });
+
     _speakCurrentPage();
   }
 
@@ -87,9 +97,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   Future<void> _finishOnboarding() async {
     await context.read<AppProvider>().setFirstLaunchComplete();
-    if (mounted) {
-      Navigator.pushReplacementNamed(context, AppRoutes.home);
-    }
+
+    if (!mounted) return;
+
+    Navigator.pushReplacementNamed(
+      context,
+      AppRoutes.home,
+    );
   }
 
   @override
@@ -105,25 +119,27 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Skip button
             Align(
               alignment: Alignment.topRight,
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(16),
                 child: Semantics(
                   label: 'Skip onboarding',
+                  button: true,
                   child: TextButton(
                     onPressed: _finishOnboarding,
                     child: const Text(
                       'Skip',
-                      style: TextStyle(color: AppTheme.ibmCoolGray, fontSize: 16),
+                      style: TextStyle(
+                        color: AppTheme.ibmCoolGray,
+                        fontSize: 16,
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
 
-            // Page content
             Expanded(
               child: PageView.builder(
                 controller: _pageController,
@@ -135,40 +151,44 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
             ),
 
-            // Page indicators
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(
                 _pages.length,
-                (index) => AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  width: _currentPage == index ? 24 : 8,
-                  height: 8,
-                  decoration: BoxDecoration(
-                    color: _currentPage == index
-                        ? _pages[_currentPage].color
-                        : AppTheme.ibmCoolGray,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                ),
+                (index) {
+                  return AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    margin: const EdgeInsets.symmetric(horizontal: 4),
+                    width: _currentPage == index ? 24 : 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color: _currentPage == index
+                          ? _pages[_currentPage].color
+                          : AppTheme.ibmCoolGray,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  );
+                },
               ),
             ),
 
-            const SizedBox(height: 32),
+            const SizedBox(height: 20),
 
-            // Next / Get Started button
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Semantics(
                 label: _currentPage == _pages.length - 1
                     ? 'Get Started'
                     : 'Next page',
+                button: true,
                 child: ElevatedButton(
                   onPressed: _nextPage,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: _pages[_currentPage].color,
-                    minimumSize: const Size(double.infinity, 60),
+                    minimumSize: const Size(
+                      double.infinity,
+                      56,
+                    ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -187,7 +207,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
             ),
 
-            const SizedBox(height: 32),
+            const SizedBox(height: 20),
           ],
         ),
       ),
@@ -195,63 +215,90 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   Widget _buildPage(OnboardingData data) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // Icon container
-          Container(
-            width: 160,
-            height: 160,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: data.color.withOpacity(0.15),
-              border: Border.all(color: data.color, width: 2),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 32,
+            vertical: 12,
+          ),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: constraints.maxHeight,
             ),
-            child: Icon(
-              data.icon,
-              size: 80,
-              color: data.color,
+            child: IntrinsicHeight(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 130,
+                    height: 130,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: data.color.withOpacity(0.15),
+                      border: Border.all(
+                        color: data.color,
+                        width: 2,
+                      ),
+                    ),
+                    child: Icon(
+                      data.icon,
+                      size: 64,
+                      color: data.color,
+                    ),
+                  )
+                      .animate()
+                      .fadeIn(
+                        duration: 500.ms,
+                      )
+                      .scale(
+                        begin: const Offset(0.8, 0.8),
+                      ),
+
+                  const SizedBox(height: 24),
+
+                  Text(
+                    data.title,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      height: 1.2,
+                    ),
+                  )
+                      .animate()
+                      .fadeIn(
+                        delay: 200.ms,
+                        duration: 500.ms,
+                      )
+                      .slideY(
+                        begin: 0.3,
+                        end: 0,
+                      ),
+
+                  const SizedBox(height: 16),
+
+                  Text(
+                    data.description,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: AppTheme.ibmCoolGray,
+                      fontSize: 16,
+                      height: 1.5,
+                    ),
+                  )
+                      .animate()
+                      .fadeIn(
+                        delay: 400.ms,
+                        duration: 500.ms,
+                      ),
+                ],
+              ),
             ),
-          )
-              .animate()
-              .fadeIn(duration: 500.ms)
-              .scale(begin: const Offset(0.8, 0.8)),
-
-          const SizedBox(height: 40),
-
-          // Title
-          Text(
-            data.title,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
-              height: 1.2,
-            ),
-          )
-              .animate()
-              .fadeIn(delay: 200.ms, duration: 500.ms)
-              .slideY(begin: 0.3, end: 0),
-
-          const SizedBox(height: 20),
-
-          // Description
-          Text(
-            data.description,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: AppTheme.ibmCoolGray,
-              fontSize: 16,
-              height: 1.6,
-            ),
-          )
-              .animate()
-              .fadeIn(delay: 400.ms, duration: 500.ms),
-        ],
-      ),
+          ),
+        );
+      },
     );
   }
 }
