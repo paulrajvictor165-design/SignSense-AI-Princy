@@ -1,8 +1,10 @@
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:provider/provider.dart';
+
 import '../providers/camera_provider.dart';
 import '../providers/voice_provider.dart';
 import '../services/detection_service.dart';
@@ -10,29 +12,18 @@ import '../utils/app_theme.dart';
 import '../widgets/detection_overlay.dart';
 import '../models/detection_result.dart';
 
-/// Live-camera screen with continuous object detection.
+/// Live camera screen.
 ///
-/// Stream design
-/// ─────────────
-/// The camera stream fires a callback for every frame (≥ 30 FPS at medium
-/// resolution).  [DetectionService] applies token-bucket throttling internally,
-/// so the UI callback is lightweight: it calls detectFromCameraImage(), gets a
-/// result (or an empty list that is silently ignored), and calls setState() only
-/// when the result set actually changes.  This keeps the build rate low and the
-/// camera preview smooth.
+/// Android / iOS:
+/// - Camera preview
+/// - Continuous CameraImage streaming
+/// - Real-time detection
+/// - Flash support where available
 ///
-/// Voice announcements
-/// ────────────────────
-/// Detections are spoken at most once every [_voiceGapMs] milliseconds to avoid
-/// a torrent of identical speech.  The voice message is debounced independently
-/// from the visual overlay refresh.
-///
-/// Mode selector
-/// ─────────────
-/// The chip bar shows only the five modes backed by live-stream endpoints.
-/// OCR, Currency, and Sign Language are intentionally excluded here — they each
-/// have their own dedicated screens.  [DetectionMode] already declares those
-/// values for use by other screens without breaking this file.
+/// Web:
+/// - Laptop/browser camera preview
+/// - No CameraImage stream
+/// - Flash disabled
 class CameraScreen extends StatefulWidget {
   const CameraScreen({super.key});
 
@@ -42,32 +33,30 @@ class CameraScreen extends StatefulWidget {
 
 class _CameraScreenState extends State<CameraScreen>
     with WidgetsBindingObserver {
-  // ── Services ────────────────────────────────────────────────────────────────
   final DetectionService _detectionService = DetectionService();
 
-  // ── State ───────────────────────────────────────────────────────────────────
+  CameraProvider? _cameraProvider;
+  VoiceProvider? _voiceProvider;
+
   List<DetectionResult> _detections = const [];
   DetectionMode _mode = DetectionMode.objects;
 
-  // Module 3: track whether the last response was low-confidence.
   bool _showLowConfidenceBanner = false;
+  bool _isStartingCamera = false;
 
-  // Voice debounce
-  DateTime _lastSpokenAt = DateTime.fromMillisecondsSinceEpoch(0);
+  DateTime _lastSpokenAt =
+      DateTime.fromMillisecondsSinceEpoch(0);
+
   static const int _voiceGapMs = 2500;
-
-  // Reduced gap for critical-priority warnings — speak sooner when danger present.
   static const int _criticalVoiceGapMs = 1000;
 
-  // Debug FPS counter — only active in debug builds.
   int _frameCount = 0;
   int _inferenceCount = 0;
   int _displayedFps = 0;
-  int _displayedIps = 0; // inferences per second
+  int _displayedIps = 0;
+
   Timer? _fpsTimer;
 
-  // Modes shown in the chip selector — only the five that use
-  // /api/detect/* endpoints. The others have dedicated screens.
   static const List<DetectionMode> _streamModes = [
     DetectionMode.objects,
     DetectionMode.traffic,
@@ -76,169 +65,520 @@ class _CameraScreenState extends State<CameraScreen>
     DetectionMode.colors,
   ];
 
-  // ── Lifecycle ────────────────────────────────────────────────────────────────
-
   @override
   void initState() {
     super.initState();
+
     WidgetsBinding.instance.addObserver(this);
     _startFpsTimer();
-    // Defer camera initialisation until the first frame is built so that
-    // context.read<> is safe to call.
-    WidgetsBinding.instance.addPostFrameCallback((_) => _initialize());
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _initialize();
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // Save provider references while context is active.
+    // These references can safely be used in dispose().
+    _cameraProvider ??=
+        Provider.of<CameraProvider>(context, listen: false);
+
+    _voiceProvider ??=
+        Provider.of<VoiceProvider>(context, listen: false);
   }
 
   Future<void> _initialize() async {
-    final cameraProvider = context.read<CameraProvider>();
-    await cameraProvider.initializeCameras();
-    if (mounted) {
-      context.read<VoiceProvider>().speak(
+    if (_isStartingCamera) return;
+
+    final cameraProvider = _cameraProvider;
+
+    if (cameraProvider == null) return;
+
+    _isStartingCamera = true;
+
+    try {
+      await cameraProvider.initializeCameras();
+
+      if (!mounted) return;
+
+      if (!cameraProvider.isInitialized) {
+        debugPrint('Camera could not be initialized.');
+        return;
+      }
+
+      _voiceProvider?.speak(
         'Camera opened. Detecting ${_mode.label}. '
         'Point camera at surroundings.',
       );
-      _startStream();
+
+      // Browser camera_web does not provide CameraImage streaming.
+      // Therefore stream detection is started only on mobile.
+      if (!kIsWeb) {
+        await _startStream();
+      }
+    } catch (e) {
+      debugPrint('Camera screen initialization error: $e');
+    } finally {
+      _isStartingCamera = false;
     }
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    final cameraProvider = context.read<CameraProvider>();
+  void didChangeAppLifecycleState(
+    AppLifecycleState state,
+  ) {
+    final cameraProvider = _cameraProvider;
+
+    if (cameraProvider == null) return;
+
     if (state == AppLifecycleState.inactive ||
-        state == AppLifecycleState.paused) {
-      cameraProvider.stopImageStream();
-    } else if (state == AppLifecycleState.resumed &&
+        state == AppLifecycleState.paused ||
+        state == AppLifecycleState.detached) {
+      if (!kIsWeb) {
+        cameraProvider.stopImageStream();
+      }
+
+      return;
+    }
+
+    if (state == AppLifecycleState.resumed &&
         cameraProvider.isInitialized) {
-      _startStream();
+      if (!kIsWeb) {
+        _startStream();
+      }
     }
   }
 
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    _fpsTimer?.cancel();
-    context.read<CameraProvider>().stopImageStream();
-    super.dispose();
+  Future<void> _startStream() async {
+    if (kIsWeb) return;
+
+    final cameraProvider = _cameraProvider;
+
+    if (cameraProvider == null ||
+        !cameraProvider.isInitialized ||
+        cameraProvider.isStreaming) {
+      return;
+    }
+
+    try {
+      await cameraProvider.startImageStream(_onFrame);
+    } catch (e) {
+      debugPrint('Unable to start camera stream: $e');
+    }
   }
 
-  // ── Stream management ────────────────────────────────────────────────────────
-
-  void _startStream() {
-    final cameraProvider = context.read<CameraProvider>();
-    if (!cameraProvider.isInitialized) return;
-
-    cameraProvider.startImageStream(_onFrame);
-  }
-
-  /// Called by the camera plugin for every frame.
-  ///
-  /// This function must return quickly — any heavy work must be async.
-  /// [DetectionService.detectFromCameraImage] returns immediately when the
-  /// token bucket is full, so we only launch async work when a new inference
-  /// window opens.
   void _onFrame(CameraImage image) {
+    if (!mounted) return;
+
     _frameCount++;
 
-    // Fire-and-forget — we do not await here so the stream callback returns
-    // immediately and the camera HAL can deliver the next frame.
+    // Do not await here. DetectionService handles throttling.
     _processFrame(image);
   }
 
   Future<void> _processFrame(CameraImage image) async {
-    final results = await _detectionService.detectFromCameraImage(
-      image,
-      mode: _mode,
-    );
+    if (!mounted || kIsWeb) return;
 
-    // Empty list means "frame was throttled" — keep the last result set
-    // visible rather than clearing the overlay.
-    if (results.isEmpty) return;
+    try {
+      final results =
+          await _detectionService.detectFromCameraImage(
+        image,
+        mode: _mode,
+      );
 
-    _inferenceCount++;
+      if (!mounted || results.isEmpty) return;
 
-    if (mounted) {
-      // Module 3: show low-confidence banner when top detection is uncertain.
-      final hasCritical = results.any((d) => d.isCritical);
-      final topLowConf  = results.isNotEmpty && results.first.lowConfidence;
+      _inferenceCount++;
+
+      final hasCritical =
+          results.any((detection) => detection.isCritical);
+
+      final topLowConfidence =
+          results.isNotEmpty &&
+          results.first.lowConfidence;
+
       setState(() {
         _detections = results;
-        _showLowConfidenceBanner = topLowConf && !hasCritical;
+
+        _showLowConfidenceBanner =
+            topLowConfidence && !hasCritical;
       });
+
       _announceDetections(results);
+    } catch (e) {
+      debugPrint('Frame processing error: $e');
     }
   }
 
-  // ── Voice announcements ──────────────────────────────────────────────────────
+  void _announceDetections(
+    List<DetectionResult> detections,
+  ) {
+    if (!mounted || detections.isEmpty) return;
 
-  void _announceDetections(List<DetectionResult> detections) {
-    if (detections.isEmpty) return;
+    final hasCritical =
+        detections.any((detection) => detection.isCritical);
 
-    // Module 3: critical objects bypass the normal voice gap — they are
-    // spoken immediately (subject only to the shorter critical gap).
-    final hasCritical = detections.any((d) => d.isCritical);
     final now = DateTime.now();
-    final elapsed = now.difference(_lastSpokenAt).inMilliseconds;
-    final requiredGap = hasCritical ? _criticalVoiceGapMs : _voiceGapMs;
+
+    final elapsed =
+        now.difference(_lastSpokenAt).inMilliseconds;
+
+    final requiredGap = hasCritical
+        ? _criticalVoiceGapMs
+        : _voiceGapMs;
+
     if (elapsed < requiredGap) return;
+
     _lastSpokenAt = now;
 
-    // Backend already returns detections priority-sorted.
-    // voiceMessage getter prepends "Warning!" / "Caution!" for critical/high.
-    final message = detections.take(3).map((d) => d.voiceMessage).join(' ');
+    final message = detections
+        .take(3)
+        .map((detection) => detection.voiceMessage)
+        .join(' ');
 
     if (hasCritical) {
-      // Interrupt any current speech for critical safety warnings.
-      context.read<VoiceProvider>().speakPriority(message);
+      _voiceProvider?.speakPriority(message);
     } else {
-      context.read<VoiceProvider>().speak(message);
+      _voiceProvider?.speak(message);
     }
   }
 
-  // ── Mode switching ───────────────────────────────────────────────────────────
-
-  Future<void> _switchMode(DetectionMode mode) async {
+  Future<void> _switchMode(
+    DetectionMode mode,
+  ) async {
     if (_mode == mode) return;
-    final cameraProvider = context.read<CameraProvider>();
-    await cameraProvider.stopImageStream();
+
+    final cameraProvider = _cameraProvider;
+
+    if (cameraProvider == null) return;
+
+    if (!kIsWeb) {
+      await cameraProvider.stopImageStream();
+    }
+
+    if (!mounted) return;
+
     setState(() {
       _mode = mode;
       _detections = const [];
+      _showLowConfidenceBanner = false;
     });
-    context.read<VoiceProvider>().speak('Switched to ${mode.label} mode.');
-    _startStream();
+
+    _voiceProvider?.speak(
+      'Switched to ${mode.label} mode.',
+    );
+
+    if (!kIsWeb) {
+      await _startStream();
+    }
   }
 
-  // ── Debug FPS counter ────────────────────────────────────────────────────────
+  Future<void> _switchCamera() async {
+    final cameraProvider = _cameraProvider;
+
+    if (cameraProvider == null) return;
+
+    if (!kIsWeb) {
+      await cameraProvider.stopImageStream();
+    }
+
+    await cameraProvider.switchCamera();
+
+    if (!mounted) return;
+
+    if (!kIsWeb) {
+      await _startStream();
+    }
+  }
 
   void _startFpsTimer() {
     if (!kDebugMode) return;
-    _fpsTimer = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (mounted) {
+
+    _fpsTimer = Timer.periodic(
+      const Duration(seconds: 1),
+      (_) {
+        if (!mounted) return;
+
         setState(() {
           _displayedFps = _frameCount;
           _displayedIps = _inferenceCount;
+
           _frameCount = 0;
           _inferenceCount = 0;
         });
-      }
-    });
+      },
+    );
   }
 
-  // ── Build ────────────────────────────────────────────────────────────────────
+  Widget _buildCameraPreview(
+    CameraProvider cameraProvider,
+  ) {
+    final controller = cameraProvider.controller;
+
+    if (!cameraProvider.isInitialized ||
+        controller == null ||
+        !controller.value.isInitialized) {
+      return const Center(
+        child: CircularProgressIndicator(
+          color: AppTheme.ibmBlue,
+        ),
+      );
+    }
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final previewAspectRatio =
+            controller.value.aspectRatio;
+
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            Container(
+              color: Colors.black,
+              alignment: Alignment.center,
+              child: AspectRatio(
+                aspectRatio: previewAspectRatio,
+                child: CameraPreview(controller),
+              ),
+            ),
+
+            // Bounding boxes.
+            Positioned.fill(
+              child: IgnorePointer(
+                child: DetectionOverlay(
+                  detections: _detections,
+                ),
+              ),
+            ),
+
+            if (kIsWeb)
+              Positioned(
+                top: 12,
+                left: 12,
+                right: 12,
+                child: SafeArea(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.black54,
+                      borderRadius:
+                          BorderRadius.circular(8),
+                    ),
+                    child: const Text(
+                      'Web camera preview active. '
+                      'Continuous AI frame detection is available '
+                      'on the Android app.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
+            if (_showLowConfidenceBanner)
+              Positioned(
+                bottom: 8,
+                left: 12,
+                right: 12,
+                child: Semantics(
+                  label:
+                      'Low confidence. Move closer for better detection.',
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.orange.shade800
+                          .withOpacity(0.85),
+                      borderRadius:
+                          BorderRadius.circular(8),
+                    ),
+                    child: const Row(
+                      mainAxisAlignment:
+                          MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.warning_amber_outlined,
+                          color: Colors.white,
+                          size: 16,
+                        ),
+                        SizedBox(width: 6),
+                        Flexible(
+                          child: Text(
+                            'Low confidence — move closer '
+                            'or improve lighting',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
+            if (cameraProvider.isProcessing)
+              const Center(
+                child: CircularProgressIndicator(
+                  color: AppTheme.ibmBlue,
+                ),
+              ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildModeSelector() {
+    return Container(
+      color: Colors.black,
+      padding: const EdgeInsets.symmetric(
+        vertical: 10,
+        horizontal: 8,
+      ),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: _streamModes.map((mode) {
+            final isSelected = _mode == mode;
+
+            return Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 4),
+              child: Semantics(
+                label: 'Switch to ${mode.label} mode',
+                selected: isSelected,
+                button: true,
+                child: GestureDetector(
+                  onTap: () => _switchMode(mode),
+                  child: AnimatedContainer(
+                    duration:
+                        const Duration(milliseconds: 200),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? AppTheme.ibmBlue
+                          : Colors.white12,
+                      borderRadius:
+                          BorderRadius.circular(20),
+                      border: Border.all(
+                        color: isSelected
+                            ? AppTheme.ibmBlue
+                            : Colors.white24,
+                      ),
+                    ),
+                    child: Text(
+                      mode.label,
+                      style: TextStyle(
+                        color: isSelected
+                            ? Colors.white
+                            : Colors.white70,
+                        fontSize: 13,
+                        fontWeight: isSelected
+                            ? FontWeight.bold
+                            : FontWeight.normal,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDetectionResults() {
+    return Container(
+      width: double.infinity,
+      constraints: const BoxConstraints(
+        minHeight: 80,
+        maxHeight: 140,
+      ),
+      color: const Color(0xFF1C1C1E),
+      padding: const EdgeInsets.all(12),
+      child: _detections.isEmpty
+          ? Center(
+              child: Text(
+                kIsWeb
+                    ? 'Camera ready — web preview mode'
+                    : 'Scanning surroundings…',
+                style: const TextStyle(
+                  color: Colors.white60,
+                  fontSize: 14,
+                ),
+              ),
+            )
+          : ListView.builder(
+              itemCount: _detections.length,
+              itemBuilder: (context, index) {
+                final detection =
+                    _detections[index];
+
+                final Color labelColor =
+                    detection.isCritical
+                        ? Colors.red.shade300
+                        : detection.isHighPriority
+                            ? Colors.orange.shade300
+                            : Colors.white;
+
+                return Text(
+                  '${detection.isCritical ? "⚠ " : ""}'
+                  '${detection.label} — '
+                  '${(detection.confidence * 100).toStringAsFixed(0)}% — '
+                  '${detection.position}',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: labelColor,
+                    fontSize: 13,
+                    fontWeight: detection.isCritical
+                        ? FontWeight.bold
+                        : FontWeight.normal,
+                  ),
+                );
+              },
+            ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    final cameraProvider = context.watch<CameraProvider>();
+    final cameraProvider =
+        context.watch<CameraProvider>();
 
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: Text('${_mode.label} Detection'),
+        title: Text(
+          '${_mode.label} Detection',
+        ),
         actions: [
-          // Debug FPS counter — stripped in release builds.
-          if (kDebugMode)
+          if (kDebugMode && !kIsWeb)
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 8,
+                vertical: 14,
+              ),
               child: Text(
                 '${_displayedFps}f/${_displayedIps}i',
                 style: const TextStyle(
@@ -248,27 +588,38 @@ class _CameraScreenState extends State<CameraScreen>
                 ),
               ),
             ),
-          Semantics(
-            label: 'Toggle flash',
-            child: IconButton(
-              icon: Icon(
-                cameraProvider.flashMode == FlashMode.off
-                    ? Icons.flash_off_outlined
-                    : Icons.flash_on_outlined,
-                color: Colors.white,
+
+          // Flash is disabled on web.
+          if (!kIsWeb)
+            Semantics(
+              label: 'Toggle flash',
+              child: IconButton(
+                icon: Icon(
+                  cameraProvider.flashMode ==
+                          FlashMode.off
+                      ? Icons.flash_off_outlined
+                      : Icons.flash_on_outlined,
+                  color: Colors.white,
+                ),
+                onPressed:
+                    cameraProvider.isInitialized
+                        ? cameraProvider.toggleFlash
+                        : null,
+                tooltip: 'Toggle Flash',
               ),
-              onPressed: () => cameraProvider.toggleFlash(),
-              tooltip: 'Toggle Flash',
             ),
-          ),
+
           Semantics(
             label: 'Switch camera',
             child: IconButton(
-              icon: const Icon(Icons.cameraswitch_outlined, color: Colors.white),
-              onPressed: () async {
-                await cameraProvider.switchCamera();
-                _startStream();
-              },
+              icon: const Icon(
+                Icons.cameraswitch_outlined,
+                color: Colors.white,
+              ),
+              onPressed:
+                  cameraProvider.cameras.length > 1
+                      ? _switchCamera
+                      : null,
               tooltip: 'Switch Camera',
             ),
           ),
@@ -276,182 +627,31 @@ class _CameraScreenState extends State<CameraScreen>
       ),
       body: Column(
         children: [
-          // ── Camera preview + detection overlay ──────────────────────────
           Expanded(
-            child: cameraProvider.isInitialized
-                ? Stack(
-                    children: [
-                      // Full-bleed camera preview
-                      SizedBox.expand(
-                        child: FittedBox(
-                          fit: BoxFit.cover,
-                          child: SizedBox(
-                            width: cameraProvider
-                                .controller!.value.previewSize!.height,
-                            height: cameraProvider
-                                .controller!.value.previewSize!.width,
-                            child: CameraPreview(cameraProvider.controller!),
-                          ),
-                        ),
-                      ),
-                      // Bounding-box overlay — repaints only when _detections changes
-                      DetectionOverlay(detections: _detections),
-                      // Module 3: Low-confidence banner — prompts user to rescan.
-                      if (_showLowConfidenceBanner)
-                        Positioned(
-                          bottom: 8,
-                          left: 12,
-                          right: 12,
-                          child: Semantics(
-                            label: 'Low confidence. Move closer for better detection.',
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 6,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.orange.shade800.withOpacity(0.85),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: const Row(
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.warning_amber_outlined,
-                                      color: Colors.white, size: 16),
-                                  SizedBox(width: 6),
-                                  Flexible(
-                                    child: Text(
-                                      'Low confidence — move closer or improve lighting',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      // Processing indicator (taken-picture path only)
-                      if (cameraProvider.isProcessing)
-                        const Center(
-                          child: CircularProgressIndicator(
-                            color: AppTheme.ibmBlue,
-                          ),
-                        ),
-                    ],
-                  )
-                : const Center(
-                    child: CircularProgressIndicator(color: AppTheme.ibmBlue),
-                  ),
-          ),
-
-          // ── Mode selector chip bar ──────────────────────────────────────
-          Container(
-            color: Colors.black,
-            padding:
-                const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: _streamModes.map((mode) {
-                  final isSelected = _mode == mode;
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: Semantics(
-                      label: 'Switch to ${mode.label} mode',
-                      selected: isSelected,
-                      button: true,
-                      child: GestureDetector(
-                        onTap: () => _switchMode(mode),
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 200),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            color: isSelected
-                                ? AppTheme.ibmBlue
-                                : Colors.white12,
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: isSelected
-                                  ? AppTheme.ibmBlue
-                                  : Colors.white24,
-                            ),
-                          ),
-                          child: Text(
-                            mode.label,
-                            style: TextStyle(
-                              color: isSelected
-                                  ? Colors.white
-                                  : Colors.white70,
-                              fontSize: 13,
-                              fontWeight: isSelected
-                                  ? FontWeight.bold
-                                  : FontWeight.normal,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
+            child: _buildCameraPreview(
+              cameraProvider,
             ),
           ),
-
-          // ── Detection results panel ─────────────────────────────────────
-          Container(
-            width: double.infinity,
-            constraints:
-                const BoxConstraints(minHeight: 80, maxHeight: 140),
-            color: const Color(0xFF1C1C1E),
-            padding: const EdgeInsets.all(12),
-            child: _detections.isEmpty
-                ? const Center(
-                    child: Text(
-                      'Scanning surroundings…',
-                      style: TextStyle(
-                        color: Colors.white60,
-                        fontSize: 14,
-                      ),
-                    ),
-                  )
-                : ListView.builder(
-                    itemCount: _detections.length,
-                    itemBuilder: (context, index) {
-                      final det = _detections[index];
-                      // Module 3: colour-code by priority tier.
-                      final Color labelColor = det.isCritical
-                          ? Colors.red.shade300
-                          : det.isHighPriority
-                              ? Colors.orange.shade300
-                              : Colors.white;
-                      return Text(
-                        '${det.isCritical ? "⚠ " : ""}'
-                        '${det.label} — '
-                        '${(det.confidence * 100).toStringAsFixed(0)}% — '
-                        '${det.position}',
-                        style: TextStyle(
-                          color: labelColor,
-                          fontSize: 13,
-                          fontWeight: det.isCritical
-                              ? FontWeight.bold
-                              : FontWeight.normal,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      );
-                    },
-                  ),
-          ),
+          _buildModeSelector(),
+          _buildDetectionResults(),
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+
+    _fpsTimer?.cancel();
+    _fpsTimer = null;
+
+    // Never use context.read() inside dispose.
+    // Use the provider reference saved earlier.
+    if (!kIsWeb) {
+      _cameraProvider?.stopImageStream();
+    }
+
+    super.dispose();
   }
 }

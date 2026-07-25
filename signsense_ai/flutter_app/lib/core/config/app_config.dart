@@ -48,7 +48,7 @@ class AppConfig {
   /// This is the **only** place the URL is defined.
   /// All services import this constant â€” never hardcode the URL elsewhere.
 static const String baseUrl =
-    'https://signsense-ai-princy.onrender.com';  
+    'https://signsense-ai-princy.onrender.com';
   // â”€â”€ HTTP timeouts â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   /// Timeout for standard API requests (OCR, Scene, Currency, Navigation).
