@@ -14,6 +14,7 @@
 /// No UI changes were made — layout and accessibility semantics are preserved.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:camera/camera.dart';
 import 'package:provider/provider.dart';
 import '../providers/camera_provider.dart';
@@ -68,10 +69,15 @@ void initState() {
     }
 
     try {
-      final result = await _client.uploadImageFile(
-        '/api/ocr/read',
-        image.path,
-      );
+      final result = kIsWeb
+          ? await _client.uploadImageBytes(
+              '/api/ocr/read',
+              await image.readAsBytes(),
+            )
+          : await _client.uploadImageFile(
+              '/api/ocr/read',
+              image.path,
+            );
       final text = result['text'] as String? ?? '';
       setState(() {
         _extractedText = text;

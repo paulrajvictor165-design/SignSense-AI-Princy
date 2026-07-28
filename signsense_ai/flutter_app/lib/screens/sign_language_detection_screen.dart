@@ -15,6 +15,7 @@
 
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:camera/camera.dart';
 import 'package:provider/provider.dart';
 import '../providers/camera_provider.dart';
@@ -164,10 +165,15 @@ class _SignLanguageDetectionScreenState
     }
 
     try {
-      final result = await _client.uploadImageFile(
-        '/api/sign/recognize',
-        image.path,
-      );
+      final result = kIsWeb
+          ? await _client.uploadImageBytes(
+              '/api/sign/recognize',
+              await image.readAsBytes(),
+            )
+          : await _client.uploadImageFile(
+              '/api/sign/recognize',
+              image.path,
+            );
 
       final signLabel  = result['sign_label']    as String? ?? 'UNKNOWN';
       final confidence = (result['confidence']   as num?)?.toDouble() ?? 0.0;

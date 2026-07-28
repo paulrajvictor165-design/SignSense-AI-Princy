@@ -57,6 +57,8 @@ class _ObjectDetectionScreenState extends State<ObjectDetectionScreen>
   int _displayedFps = 0;
   int _displayedIps = 0;
   Timer? _fpsTimer;
+  Timer? _webCaptureTimer;
+  bool _webCaptureInProgress = false;
 
   // ── Lifecycle ────────────────────────────────────────────────────────────────
 
@@ -95,7 +97,11 @@ class _ObjectDetectionScreenState extends State<ObjectDetectionScreen>
       context.read<VoiceProvider>().speak(
         'Object Detection. Camera is active. Scanning for objects.',
       );
-      _startStream();
+      if (kIsWeb) {
+        _startWebCaptureLoop();
+      } else {
+        _startStream();
+      }
     }
   }
 
@@ -104,11 +110,19 @@ class _ObjectDetectionScreenState extends State<ObjectDetectionScreen>
     final cameraProvider = context.read<CameraProvider>();
     if (state == AppLifecycleState.inactive ||
         state == AppLifecycleState.paused) {
-      cameraProvider.stopImageStream();
+      if (kIsWeb) {
+        _stopWebCaptureLoop();
+      } else {
+        cameraProvider.stopImageStream();
+      }
     } else if (state == AppLifecycleState.resumed &&
         cameraProvider.isInitialized &&
         _backendAlive) {
-      _startStream();
+      if (kIsWeb) {
+        _startWebCaptureLoop();
+      } else {
+        _startStream();
+      }
     }
   }
 
@@ -116,6 +130,7 @@ class _ObjectDetectionScreenState extends State<ObjectDetectionScreen>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _fpsTimer?.cancel();
+    _stopWebCaptureLoop();
     _client.dispose();
     // Stop camera stream before disposing.
     context.read<CameraProvider>().stopImageStream();
@@ -125,6 +140,7 @@ class _ObjectDetectionScreenState extends State<ObjectDetectionScreen>
   // ── Stream management ────────────────────────────────────────────────────────
 
   void _startStream() {
+    if (kIsWeb) return;
     final cameraProvider = context.read<CameraProvider>();
     if (!cameraProvider.isInitialized) return;
     cameraProvider.startImageStream(_onFrame);
@@ -141,22 +157,61 @@ class _ObjectDetectionScreenState extends State<ObjectDetectionScreen>
       mode: DetectionMode.objects,
     );
 
-    if (results.isEmpty) return;
+    _applyDetectionResults(results);
+  }
+
+  void _startWebCaptureLoop() {
+    if (!kIsWeb || _webCaptureTimer != null) return;
+    _captureWebFrame();
+    _webCaptureTimer = Timer.periodic(
+      const Duration(seconds: 2),
+      (_) => _captureWebFrame(),
+    );
+  }
+
+  void _stopWebCaptureLoop() {
+    _webCaptureTimer?.cancel();
+    _webCaptureTimer = null;
+  }
+
+  Future<void> _captureWebFrame() async {
+    if (!mounted || _webCaptureInProgress || !_backendAlive) return;
+
+    final cameraProvider = context.read<CameraProvider>();
+    if (!cameraProvider.isInitialized || cameraProvider.isProcessing) return;
+
+    _webCaptureInProgress = true;
+    try {
+      final image = await cameraProvider.takePicture();
+      if (image == null) return;
+
+      _frameCount++;
+      final results = await _detectionService.sendJpegBytes(
+        await image.readAsBytes(),
+        DetectionMode.objects,
+      );
+      _applyDetectionResults(results);
+    } catch (error, stackTrace) {
+      debugPrint('Web object capture failed: $error');
+      debugPrintStack(stackTrace: stackTrace);
+    } finally {
+      _webCaptureInProgress = false;
+    }
+  }
+
+  void _applyDetectionResults(List<DetectionResult> results) {
+    if (!mounted || results.isEmpty) return;
 
     _inferenceCount++;
-
-    if (mounted) {
-      final hasCritical = results.any((d) => d.isCritical);
-      final topLowConf  = results.isNotEmpty && results.first.lowConfidence;
-      setState(() {
-        _detections = results;
-        _showLowConfidenceBanner = topLowConf && !hasCritical;
-        _statusMessage = results.isEmpty
-            ? 'No objects detected.'
-            : '${results.length} object${results.length == 1 ? '' : 's'} detected';
-      });
-      _announceDetections(results);
-    }
+    final hasCritical = results.any((d) => d.isCritical);
+    final topLowConf = results.first.lowConfidence;
+    setState(() {
+      _detections = results;
+      _showLowConfidenceBanner = topLowConf && !hasCritical;
+      _statusMessage =
+          '${results.length} object${results.length == 1 ? '' : 's'} detected';
+    });
+    _announceDetections(results);
   }
 
   // ── Voice announcements ──────────────────────────────────────────────────────

@@ -27,6 +27,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 
@@ -121,6 +122,12 @@ class ApiClient {
     String imagePath, {
     Duration? timeout,
   }) async {
+    if (kIsWeb) {
+      throw UnsupportedError(
+        'Browser captures must be uploaded with uploadImageBytes().',
+      );
+    }
+
     final request = http.MultipartRequest(
       'POST',
       Uri.parse('${AppConfig.baseUrl}$endpoint'),
@@ -160,7 +167,7 @@ class ApiClient {
       ),
     );
 
-    return _sendMultipart(request, timeout ?? AppConfig.inferenceTimeout);
+    return _sendMultipart(request, timeout ?? AppConfig.requestTimeout);
   }
 
   // ── Health check ──────────────────────────────────────────────────────────
@@ -227,14 +234,20 @@ class ApiClient {
     try {
       final streamedResponse = await request.send().timeout(timeout);
       final response = await http.Response.fromStream(streamedResponse);
+      debugPrint('Multipart response status: ${response.statusCode}');
       return _parseResponse(response);
     } on TimeoutException {
+      debugPrint('Multipart upload timed out after ${timeout.inSeconds}s.');
       throw const NetworkException(
         detail: 'Multipart upload timed out',
         isTimeout: true,
       );
     } on SocketException catch (e) {
+      debugPrint('Multipart network error: $e');
       throw NetworkException(detail: 'SocketException on multipart: $e');
+    } on http.ClientException catch (e) {
+      debugPrint('Multipart client/network error: $e');
+      throw NetworkException(detail: 'ClientException on multipart: $e');
     }
   }
 
@@ -258,7 +271,8 @@ class ApiClient {
           return decoded;
         }
         return {'result': decoded};
-      } catch (_) {
+      } on FormatException catch (e) {
+        debugPrint('Invalid JSON response: $e');
         return {'raw': response.body};
       }
     }
@@ -266,6 +280,7 @@ class ApiClient {
     // Non-2xx — parse error envelope.
     String errorCode = 'UNKNOWN_ERROR';
     String serverMessage = 'Request failed with status ${response.statusCode}.';
+    debugPrint('Backend error ${response.statusCode}: ${response.body}');
 
     try {
       final body = jsonDecode(response.body) as Map<String, dynamic>;
@@ -274,7 +289,8 @@ class ApiClient {
         errorCode    = errorBlock['code']    as String? ?? errorCode;
         serverMessage = errorBlock['message'] as String? ?? serverMessage;
       }
-    } catch (_) {
+    } on FormatException catch (e) {
+      debugPrint('Invalid backend error JSON: $e');
       // Could not parse error body — use defaults.
     }
 

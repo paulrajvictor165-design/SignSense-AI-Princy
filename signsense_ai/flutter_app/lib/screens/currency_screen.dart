@@ -20,6 +20,7 @@
 /// UI layout and accessibility semantics are unchanged.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:camera/camera.dart';
 import 'package:provider/provider.dart';
 import '../providers/camera_provider.dart';
@@ -73,10 +74,15 @@ class _CurrencyScreenState extends State<CurrencyScreen> {
     }
 
     try {
-      final result = await _client.uploadImageFile(
-        '/api/currency/detect',
-        image.path,
-      );
+      final result = kIsWeb
+          ? await _client.uploadImageBytes(
+              '/api/currency/detect',
+              await image.readAsBytes(),
+            )
+          : await _client.uploadImageFile(
+              '/api/currency/detect',
+              image.path,
+            );
 
       final denomination = result['denomination']?.toString() ?? '';
       // voice_message is already built by currency_service.py

@@ -22,7 +22,7 @@ import '../models/detection_result.dart';
 ///
 /// Web:
 /// - Laptop/browser camera preview
-/// - No CameraImage stream
+/// - Periodic still-image detection
 /// - Flash disabled
 class CameraScreen extends StatefulWidget {
   const CameraScreen({super.key});
@@ -56,6 +56,8 @@ class _CameraScreenState extends State<CameraScreen>
   int _displayedIps = 0;
 
   Timer? _fpsTimer;
+  Timer? _webCaptureTimer;
+  bool _webCaptureInProgress = false;
 
   static const List<DetectionMode> _streamModes = [
     DetectionMode.objects,
@@ -115,9 +117,9 @@ class _CameraScreenState extends State<CameraScreen>
         'Point camera at surroundings.',
       );
 
-      // Browser camera_web does not provide CameraImage streaming.
-      // Therefore stream detection is started only on mobile.
-      if (!kIsWeb) {
+      if (kIsWeb) {
+        _startWebCaptureLoop();
+      } else {
         await _startStream();
       }
     } catch (e) {
@@ -138,7 +140,9 @@ class _CameraScreenState extends State<CameraScreen>
     if (state == AppLifecycleState.inactive ||
         state == AppLifecycleState.paused ||
         state == AppLifecycleState.detached) {
-      if (!kIsWeb) {
+      if (kIsWeb) {
+        _stopWebCaptureLoop();
+      } else {
         cameraProvider.stopImageStream();
       }
 
@@ -147,7 +151,9 @@ class _CameraScreenState extends State<CameraScreen>
 
     if (state == AppLifecycleState.resumed &&
         cameraProvider.isInitialized) {
-      if (!kIsWeb) {
+      if (kIsWeb) {
+        _startWebCaptureLoop();
+      } else {
         _startStream();
       }
     }
@@ -190,28 +196,67 @@ class _CameraScreenState extends State<CameraScreen>
         mode: _mode,
       );
 
-      if (!mounted || results.isEmpty) return;
-
-      _inferenceCount++;
-
-      final hasCritical =
-          results.any((detection) => detection.isCritical);
-
-      final topLowConfidence =
-          results.isNotEmpty &&
-          results.first.lowConfidence;
-
-      setState(() {
-        _detections = results;
-
-        _showLowConfidenceBanner =
-            topLowConfidence && !hasCritical;
-      });
-
-      _announceDetections(results);
+      _applyDetectionResults(results);
     } catch (e) {
       debugPrint('Frame processing error: $e');
     }
+  }
+
+  void _startWebCaptureLoop() {
+    if (!kIsWeb || _webCaptureTimer != null) return;
+    _captureWebFrame();
+    _webCaptureTimer = Timer.periodic(
+      const Duration(seconds: 2),
+      (_) => _captureWebFrame(),
+    );
+  }
+
+  void _stopWebCaptureLoop() {
+    _webCaptureTimer?.cancel();
+    _webCaptureTimer = null;
+  }
+
+  Future<void> _captureWebFrame() async {
+    final cameraProvider = _cameraProvider;
+    if (!mounted ||
+        _webCaptureInProgress ||
+        cameraProvider == null ||
+        !cameraProvider.isInitialized ||
+        cameraProvider.isProcessing) {
+      return;
+    }
+
+    _webCaptureInProgress = true;
+    try {
+      final image = await cameraProvider.takePicture();
+      if (image == null) return;
+
+      _frameCount++;
+      final results = await _detectionService.sendJpegBytes(
+        await image.readAsBytes(),
+        _mode,
+      );
+      _applyDetectionResults(results);
+    } catch (error, stackTrace) {
+      debugPrint('Web camera capture failed: $error');
+      debugPrintStack(stackTrace: stackTrace);
+    } finally {
+      _webCaptureInProgress = false;
+    }
+  }
+
+  void _applyDetectionResults(List<DetectionResult> results) {
+    if (!mounted || results.isEmpty) return;
+
+    _inferenceCount++;
+    final hasCritical = results.any((detection) => detection.isCritical);
+    final topLowConfidence = results.first.lowConfidence;
+
+    setState(() {
+      _detections = results;
+      _showLowConfidenceBanner = topLowConfidence && !hasCritical;
+    });
+    _announceDetections(results);
   }
 
   void _announceDetections(
@@ -282,7 +327,9 @@ class _CameraScreenState extends State<CameraScreen>
 
     if (cameraProvider == null) return;
 
-    if (!kIsWeb) {
+    if (kIsWeb) {
+      _stopWebCaptureLoop();
+    } else {
       await cameraProvider.stopImageStream();
     }
 
@@ -290,7 +337,9 @@ class _CameraScreenState extends State<CameraScreen>
 
     if (!mounted) return;
 
-    if (!kIsWeb) {
+    if (kIsWeb) {
+      _startWebCaptureLoop();
+    } else {
       await _startStream();
     }
   }
@@ -372,9 +421,7 @@ class _CameraScreenState extends State<CameraScreen>
                           BorderRadius.circular(8),
                     ),
                     child: const Text(
-                      'Web camera preview active. '
-                      'Continuous AI frame detection is available '
-                      'on the Android app.',
+                      'Web camera detection uses a still frame every 2 seconds.',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.white70,
@@ -519,7 +566,7 @@ class _CameraScreenState extends State<CameraScreen>
           ? Center(
               child: Text(
                 kIsWeb
-                    ? 'Camera ready — web preview mode'
+                    ? 'Scanning web camera every 2 seconds…'
                     : 'Scanning surroundings…',
                 style: const TextStyle(
                   color: Colors.white60,
@@ -645,6 +692,7 @@ class _CameraScreenState extends State<CameraScreen>
 
     _fpsTimer?.cancel();
     _fpsTimer = null;
+    _stopWebCaptureLoop();
 
     // Never use context.read() inside dispose.
     // Use the provider reference saved earlier.

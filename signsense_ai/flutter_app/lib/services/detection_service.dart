@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:camera/camera.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import '../models/detection_result.dart';
@@ -142,7 +143,9 @@ class DetectionService {
       _lastCompleted = DateTime.now();
       _busy = false;
       return results;
-    } catch (_) {
+    } catch (error, stackTrace) {
+      debugPrint('Camera frame detection failed: $error');
+      debugPrintStack(stackTrace: stackTrace);
       // Silent per-frame failure — stream must never throw to the caller.
       _busy = false;
       return const [];
@@ -182,22 +185,41 @@ class DetectionService {
       ),
     );
 
-    final streamedResponse = await request.send().timeout(_requestTimeout);
-    final response = await http.Response.fromStream(streamedResponse);
+    try {
+      final streamedResponse = await request.send().timeout(_requestTimeout);
+      final response = await http.Response.fromStream(streamedResponse);
+      debugPrint('Detection response status: ${response.statusCode}');
 
-    if (response.statusCode != 200) return const [];
+      if (response.statusCode != 200) {
+        debugPrint(
+          'Detection backend error ${response.statusCode}: ${response.body}',
+        );
+        return const [];
+      }
 
-    final data = jsonDecode(response.body) as Map<String, dynamic>;
+      final data = jsonDecode(response.body) as Map<String, dynamic>;
 
     // All detection endpoints return a top-level "detections" list.
     // OCR and currency endpoints return different shapes — callers that need
     // those shapes should use ApiService directly; here we return an empty
     // list so CameraScreen still compiles cleanly for those mode values.
-    final rawList = data['detections'] as List<dynamic>?;
-    if (rawList == null) return const [];
+      final rawList = data['detections'] as List<dynamic>?;
+      if (rawList == null) return const [];
 
-    return rawList
-        .map((d) => DetectionResult.fromJson(d as Map<String, dynamic>))
-        .toList();
+      return rawList
+          .map((d) => DetectionResult.fromJson(d as Map<String, dynamic>))
+          .toList();
+    } on TimeoutException {
+      debugPrint(
+        'Detection request timed out after ${_requestTimeout.inSeconds}s.',
+      );
+      rethrow;
+    } on http.ClientException catch (error) {
+      debugPrint('Detection network error: $error');
+      rethrow;
+    } on FormatException catch (error) {
+      debugPrint('Invalid detection JSON: $error');
+      rethrow;
+    }
   }
 }

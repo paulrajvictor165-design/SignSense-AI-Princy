@@ -20,6 +20,7 @@
 /// UI layout and accessibility semantics are unchanged.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:camera/camera.dart';
 import 'package:provider/provider.dart';
 import '../providers/camera_provider.dart';
@@ -69,10 +70,15 @@ class _SceneDescriptionScreenState extends State<SceneDescriptionScreen> {
     }
 
     try {
-      final result = await _client.uploadImageFile(
-        '/api/scene/describe',
-        image.path,
-      );
+      final result = kIsWeb
+          ? await _client.uploadImageBytes(
+              '/api/scene/describe',
+              await image.readAsBytes(),
+            )
+          : await _client.uploadImageFile(
+              '/api/scene/describe',
+              image.path,
+            );
       final description =
           result['description'] as String? ?? 'Could not analyze the scene.';
       if (description.isEmpty) {
