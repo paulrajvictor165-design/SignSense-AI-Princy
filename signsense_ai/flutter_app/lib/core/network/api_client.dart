@@ -168,14 +168,48 @@ class ApiClient {
   /// Returns true when the backend responds with HTTP 200 on /health.
   /// Used by screens to display a "server offline" warning.
   Future<bool> isServerAlive() async {
-    try {
-      final response = await _client
-          .get(Uri.parse('${AppConfig.baseUrl}/health'))
-          .timeout(AppConfig.healthCheckTimeout);
-      return response.statusCode == 200;
-    } catch (_) {
-      return false;
+    final uri = Uri.parse(
+      '${AppConfig.baseUrl}${AppConfig.healthEndpoint}',
+    );
+
+    for (var attempt = 0; attempt < 2; attempt++) {
+      try {
+        final response = await _client.get(
+          uri,
+          headers: const {'Accept': 'application/json'},
+        ).timeout(AppConfig.healthCheckTimeout);
+
+        if (response.statusCode != 200) {
+          if (attempt == 1) return false;
+          await Future<void>.delayed(const Duration(seconds: 1));
+          continue;
+        }
+
+        final decoded = jsonDecode(response.body);
+        final status = decoded is Map<String, dynamic>
+            ? decoded['status']
+            : null;
+        if (status == 'healthy' || status == 'ok') {
+          return true;
+        }
+
+        return false;
+      } on TimeoutException {
+        if (attempt == 1) return false;
+      } on http.ClientException {
+        if (attempt == 1) return false;
+      } on SocketException {
+        if (attempt == 1) return false;
+      } on FormatException {
+        return false;
+      } catch (_) {
+        return false;
+      }
+
+      await Future<void>.delayed(const Duration(seconds: 1));
     }
+
+    return false;
   }
 
   // ── Dispose ───────────────────────────────────────────────────────────────

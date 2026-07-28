@@ -60,7 +60,7 @@ static const String baseUrl =
   static const Duration inferenceTimeout = Duration(seconds: 8);
 
   /// Timeout for the backend health-check probe.
-  static const Duration healthCheckTimeout = Duration(seconds: 5);
+  static const Duration healthCheckTimeout = Duration(seconds: 60);
 
   // â”€â”€ Camera pipeline â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
@@ -115,4 +115,3 @@ static const String baseUrl =
   static const String appVersion = '1.0.0';
   static const String appName = 'SignSense AI';
 }
-

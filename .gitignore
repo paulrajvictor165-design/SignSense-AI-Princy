@@ -9,3 +9,4 @@ build/
 android/build/
 dataset/
 *.log
+.vercel
