@@ -918,31 +918,31 @@ Add screenshots inside the `screenshots` directory.
 ### Landing Page
 
 ```markdown
-![AISense Landing Page](screenshots/landing-page.png)
+![AISense Landing Page](screenshots/Landing Page.jpg)
 ```
 
 ### Accessibility Dashboard
 
 ```markdown
-![AISense Dashboard](screenshots/dashboard.png)
+![AISense Dashboard](screenshots/Accessibility Dashboard.png)
 ```
 
 ### Object Detection
 
 ```markdown
-![Object Detection](screenshots/object-detection.png)
+![Object Detection](screenshots/Object Detection.png)
 ```
 
 ### OCR Text Reader
 
 ```markdown
-![OCR Text Reader](screenshots/ocr-reader.png)
+![OCR Text Reader](screenshots/OCR Text Reader.png)
 ```
 
 ### AI Scene Description
 
 ```markdown
-![AI Scene Description](screenshots/scene-description.png)
+![AI Scene Description](screenshots/AI Scene Description.png)
 ```
 
 ### Recommended Screenshots
