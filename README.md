@@ -10,7 +10,7 @@
 
 **Challenge Theme:** Reimagine Creative Industries with AI
 
-AISense empowers people with visual, hearing, and speech impairments through intelligent computer vision, voice assistance, and accessible technology.
+AISense empowers people with visual, hearing, and speech impairments through intelligent computer vision, voice assistance, navigation, and accessible technology.
 
 <br>
 
@@ -37,6 +37,7 @@ AISense empowers people with visual, hearing, and speech impairments through int
 * [AI Architecture](#ai-architecture)
 * [AI Technologies](#ai-technologies)
 * [Application Workflow](#application-workflow)
+* [Real-Time Processing](#real-time-processing)
 * [Technology Stack](#technology-stack)
 * [Project Structure](#project-structure)
 * [Getting Started](#getting-started)
@@ -48,10 +49,13 @@ AISense empowers people with visual, hearing, and speech impairments through int
 * [IBM Bob Integration](#ibm-bob-integration)
 * [Real-World Impact](#real-world-impact)
 * [Future Improvements](#future-improvements)
+* [Team Members](#team-members)
 * [Challenge Submission](#challenge-submission)
+* [Submission Checklist](#submission-checklist)
 * [Contributing](#contributing)
 * [License](#license)
 * [Acknowledgements](#acknowledgements)
+* [Support](#support)
 
 ---
 
@@ -551,11 +555,11 @@ Each technology is selected for a specialized task while maintaining modularity 
 
 ## Application Workflow
 
-### 1. Select an Accessibility Service
+### Step 1 — Select an Accessibility Service
 
 The user opens AISense and selects a service such as object detection, OCR reading, currency detection, scene description, sign language recognition, or navigation.
 
-### 2. Capture Input
+### Step 2 — Capture Input
 
 AISense collects input through:
 
@@ -566,15 +570,15 @@ AISense collects input through:
 * GPS location
 * Destination input
 
-### 3. Send API Request
+### Step 3 — Send API Request
 
 The Flutter application securely sends the captured data to the FastAPI backend using REST API requests.
 
-### 4. Route the Request
+### Step 4 — Route the Request
 
 The backend validates the request and routes it to the appropriate AI module.
 
-### 5. Process the Input
+### Step 5 — Process the Input
 
 The selected AI technology processes the input.
 
@@ -587,7 +591,7 @@ Examples:
 * OpenCV detects faces and colors
 * OpenRouteService generates routes
 
-### 6. Generate Structured Results
+### Step 6 — Generate Structured Results
 
 The backend generates a structured JSON response containing relevant information such as:
 
@@ -599,7 +603,7 @@ The backend generates a structured JSON response containing relevant information
 * Processing status
 * Error information
 
-### 7. Present the Result
+### Step 7 — Present the Result
 
 AISense communicates the result through:
 
@@ -639,7 +643,7 @@ Actual response time depends on the device, network connection, installed AI mod
 * Dart
 * Material Design
 * Flutter Camera
-* Flutter TTS
+* Flutter Text-to-Speech
 * HTTP
 * Provider
 * Geolocator
@@ -759,8 +763,8 @@ Install the following software before running the project:
 ### Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/AISense-Universal-Accessibility.git
-cd AISense-Universal-Accessibility
+git clone https://github.com/paulrajvictor165-design/SignSense-AI.git
+cd SignSense-AI
 ```
 
 ---
@@ -773,7 +777,7 @@ Navigate to the backend directory:
 cd backend
 ```
 
-Create a virtual environment:
+Create a virtual environment.
 
 #### Windows
 
@@ -795,13 +799,15 @@ Install the required packages:
 pip install -r requirements.txt
 ```
 
-Create the environment file:
+Create the environment file.
+
+#### Windows
 
 ```bash
 copy .env.example .env
 ```
 
-On Linux or macOS:
+#### Linux or macOS
 
 ```bash
 cp .env.example .env
@@ -907,7 +913,7 @@ API availability may depend on the models, datasets, API keys, and environment c
 
 ## Screenshots
 
-Add screenshots inside the `screenshots` directory and replace the placeholders below.
+Add screenshots inside the `screenshots` directory.
 
 ### Landing Page
 
@@ -933,18 +939,23 @@ Add screenshots inside the `screenshots` directory and replace the placeholders 
 ![OCR Text Reader](screenshots/ocr-reader.png)
 ```
 
-### Scene Description
+### AI Scene Description
 
 ```markdown
 ![AI Scene Description](screenshots/scene-description.png)
 ```
 
-### Additional Recommended Screenshots
+### Recommended Screenshots
 
+* Landing Page
 * Login Page
+* Accessibility Dashboard
 * Live Camera
+* Object Detection
 * Sign Language Recognition
+* OCR Text Reader
 * Currency Detection
+* AI Scene Description
 * Traffic Sign Detection
 * Color Detection
 * Navigation Assistance
@@ -954,7 +965,7 @@ Add screenshots inside the `screenshots` directory and replace the placeholders 
 
 ## Demo Video
 
-The demonstration video should include:
+The project demonstration video should include:
 
 1. Project introduction
 2. Problem statement
@@ -966,18 +977,19 @@ The demonstration video should include:
 8. Real-world impact
 9. Future improvements
 
-**YouTube Demo:** `[Add Public YouTube URL]`
+**YouTube Demo:** `[Add Public YouTube Video URL]`
 
 ---
 
 ## Live Application
 
-| Resource             | Link                          |
-| -------------------- | ----------------------------- |
-| Frontend Application | `[Add Vercel URL]`            |
-| Backend API          | `[Add Render URL]`            |    |
-| GitHub Repository    | `[Add GitHub Repository URL]` |
-| Demo Video           | `[Add YouTube URL]`           |
+| Resource             | Link                                                    |
+| -------------------- | ------------------------------------------------------- |
+| Frontend Application | https://sign-sense-ai-princy-23pt.vercel.app            |
+| Backend API          | https://signsense-ai-princy.onrender.com                |
+| Backend Health Check | https://signsense-ai-princy.onrender.com/health         |
+| GitHub Repository    | https://github.com/paulrajvictor165-design/SignSense-AI |
+| Demo Video           | `[Add Public YouTube Video URL]`                        |
 
 ---
 
@@ -1069,6 +1081,19 @@ These improvements can further enhance usability, personalization, accessibility
 
 ---
 
+## Team Members
+
+AISense was developed through collaborative planning, implementation, testing, documentation, and deployment preparation.
+
+| Team Member   | Role                                | Contribution                                                                                                                                                                           |
+| ------------- | ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **V. PRINCY** | Team Lead and Full-Stack Developer  | Project planning, system architecture, Flutter frontend development, FastAPI backend integration, AI module coordination, testing, deployment, documentation, and challenge submission |
+| **S. KAVYA**  | Team Member and Project Contributor | Feature development support, application testing, accessibility validation, documentation, presentation preparation, and project submission support                                    |
+
+The team worked together to develop an inclusive AI-powered accessibility platform that combines computer vision, voice assistance, intelligent navigation, and multiple accessibility services within a single application.
+
+---
+
 ## Challenge Submission
 
 | Field                    | Details                                                   |
@@ -1078,11 +1103,14 @@ These improvements can further enhance usability, personalization, accessibility
 | Challenge                | IBM AI Builders Challenge 2026                            |
 | Challenge Period         | July 2026                                                 |
 | Theme                    | Reimagine Creative Industries with AI                     |
+| Team Lead                | V. PRINCY                                                 |
+| Team Member              | S. KAVYA                                                  |
+| Team Size                | 2 Members                                                 |
 | Primary Development Tool | IBM Bob                                                   |
 | Application Type         | AI-Powered Accessibility Platform                         |
 | Frontend                 | Flutter                                                   |
 | Backend                  | FastAPI                                                   |
-| AI Technologies          | YOLOv8, MediaPipe, EasyOCR, Gemini AI and OpenCV          |
+| AI Technologies          | YOLOv8, MediaPipe, EasyOCR, Gemini AI, and OpenCV         |
 | Database                 | SQLite / PostgreSQL                                       |
 | Deployment               | Vercel and Render                                         |
 | Category                 | Accessibility AI / Computer Vision / Assistive Technology |
@@ -1097,21 +1125,23 @@ These improvements can further enhance usability, personalization, accessibility
 * [x] Frontend connected to backend
 * [x] Object detection module added
 * [x] OCR text reader added
-* [x] Scene description module added
+* [x] AI scene description module added
 * [x] Face detection module added
 * [x] Color detection module added
 * [x] Traffic sign module included
 * [x] Navigation module included
 * [x] IBM Bob usage documented
+* [x] Team members documented
 * [x] README documentation prepared
 * [x] Environment configuration documented
 * [x] MIT License included
-* [ ] Verify trained currency model in production
-* [ ] Verify trained sign-language model in production
+* [x] Frontend deployed on Vercel
+* [x] Backend deployed on Render
+* [x] Public GitHub repository added
+* [ ] Verify the trained currency model in production
+* [ ] Verify the trained sign-language model in production
 * [ ] Add final application screenshots
 * [ ] Add public demo-video URL
-* [ ] Add final frontend deployment URL
-* [ ] Add final backend deployment URL
 * [ ] Add IBM SkillsBuild certificate evidence
 
 ---
@@ -1177,6 +1207,14 @@ Special thanks to the technologies, tools, and communities that supported the de
 
 ---
 
+## Support
+
+If you found this project useful, please consider giving the GitHub repository a ⭐.
+
+Your support encourages continued development and helps promote accessibility through Artificial Intelligence.
+
+---
+
 <div align="center">
 
 # ♿ AISense
@@ -1185,10 +1223,12 @@ Special thanks to the technologies, tools, and communities that supported the de
 
 **Empowering Accessibility Through Artificial Intelligence**
 
+### Team
+
+**V. PRINCY — Team Lead**
+
+**S. KAVYA — Team Member**
+
 Built with dedication for the **IBM AI Builders Challenge 2026**
-
-<br>
-
-If you found this project useful, consider giving the repository a ⭐.
 
 </div>
