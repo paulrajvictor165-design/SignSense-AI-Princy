@@ -1,361 +1,386 @@
-🌍 AISense – Universal Accessibility Assistant
+<div align="center">
 
-<div align="center">AI-Powered Universal Accessibility for Everyone
+# ♿ AISense
 
-IBM AI Builders Challenge 2026 — July Challenge
+## Universal Accessibility Assistant
 
-Challenge Theme: Reimagine Creative Industries with AI
+### AI-Powered Accessibility for Everyone
 
-<br>Empowering people with visual, hearing, and speech impairments through intelligent computer vision, voice assistance, and accessible technology.
+**IBM AI Builders Challenge 2026 — July Challenge**
 
-</div>---
+**Challenge Theme:** Reimagine Creative Industries with AI
 
-📑 Table of Contents
+AISense empowers people with visual, hearing, and speech impairments through intelligent computer vision, voice assistance, and accessible technology.
 
-- "Project Overview" (#-project-overview)
-- "Selected Challenge Theme" (#-selected-challenge-theme)
-- "Problem Statement" (#-problem-statement)
-- "Proposed Solution" (#-proposed-solution)
-- "Key Features" (#-key-features)
-- "Core AI Features" (#-core-ai-features)
-- "Innovation" (#-innovation)
-- "System Architecture" (#-system-architecture)
-- "AI Architecture" (#-ai-architecture)
-- "AI Models Used" (#-ai-models-used)
-- "AI Workflow" (#-ai-workflow)
-- "Technology Stack" (#-technology-stack)
-- "Project Structure" (#-project-structure)
-- "Getting Started" (#-getting-started)
-- "Backend Setup" (#-backend-setup)
-- "Flutter Frontend Setup" (#-flutter-frontend-setup)
-- "Environment Variables" (#-environment-variables)
-- "API Endpoints" (#-core-api-endpoints)
-- "Screenshots" (#-screenshots)
-- "Demo Video" (#-demo-video)
-- "Live Application" (#-live-application)
-- "How IBM Bob Was Used" (#-how-ibm-bob-was-used)
-- "Real-World Impact" (#-real-world-impact)
-- "Future Improvements" (#-future-improvements)
-- "IBM Challenge Submission" (#-ibm-ai-builders-challenge-submission)
-- "Submission Checklist" (#-submission-checklist)
-- "Contributing" (#-contributing)
-- "License" (#-license)
-- "Acknowledgements" (#-acknowledgements)
-- "Support" (#-support)
+<br>
+
+[![Flutter](https://img.shields.io/badge/Frontend-Flutter-02569B?logo=flutter)](https://flutter.dev/)
+[![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688?logo=fastapi)](https://fastapi.tiangolo.com/)
+[![Python](https://img.shields.io/badge/Python-3.11+-3776AB?logo=python)](https://www.python.org/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![IBM Bob](https://img.shields.io/badge/Developed%20with-IBM%20Bob-052FAD)](https://www.ibm.com/)
+
+</div>
 
 ---
 
-📌 Project Overview
+## Table of Contents
 
-AISense – Universal Accessibility Assistant is an AI-powered accessibility platform designed to support people with visual, hearing, and speech impairments.
-
-The platform combines several accessibility services into one intelligent application. It enables users to recognize objects, read printed text, understand complete scenes, identify currency notes, detect colors, recognize traffic signs, communicate using sign language, and receive navigation assistance.
-
-Instead of requiring users to install and manage multiple accessibility applications, AISense provides a unified assistant that delivers real-time, context-aware support through camera input, artificial intelligence, computer vision, text output, and voice feedback.
-
-AISense is built using a cross-platform Flutter frontend, a scalable FastAPI backend, and multiple specialized AI technologies including YOLOv8, MediaPipe, EasyOCR, Google Gemini AI, and OpenCV.
-
-The project was developed for the IBM AI Builders Challenge 2026 using IBM Bob as the primary AI-assisted development tool during planning, architecture design, coding, debugging, testing, documentation, and deployment preparation.
-
----
-
-🎯 Selected Challenge Theme
-
-Reimagine Creative Industries with AI
-
-Artificial Intelligence is transforming how people interact with digital products, media, communication systems, and real-world environments.
-
-AISense applies AI to accessibility by enabling people with disabilities to access information, understand their surroundings, communicate more effectively, and navigate unfamiliar environments with greater confidence.
-
-The platform focuses on:
-
-- AI-powered accessibility
-- Computer vision
-- Real-time object recognition
-- Sign language recognition
-- OCR-based text reading
-- AI scene understanding
-- Currency recognition
-- Traffic sign detection
-- Smart navigation
-- Voice-based feedback
-- Inclusive user experience
-- Assistive technology
-
-AISense demonstrates how multiple AI technologies can work together to create a practical, intelligent, and inclusive accessibility assistant.
+* [Project Overview](#project-overview)
+* [Challenge Theme](#challenge-theme)
+* [Problem Statement](#problem-statement)
+* [Proposed Solution](#proposed-solution)
+* [Key Features](#key-features)
+* [Core AI Modules](#core-ai-modules)
+* [Innovation](#innovation)
+* [System Architecture](#system-architecture)
+* [AI Architecture](#ai-architecture)
+* [AI Technologies](#ai-technologies)
+* [Application Workflow](#application-workflow)
+* [Technology Stack](#technology-stack)
+* [Project Structure](#project-structure)
+* [Getting Started](#getting-started)
+* [Environment Variables](#environment-variables)
+* [API Endpoints](#api-endpoints)
+* [Screenshots](#screenshots)
+* [Demo Video](#demo-video)
+* [Live Application](#live-application)
+* [IBM Bob Integration](#ibm-bob-integration)
+* [Real-World Impact](#real-world-impact)
+* [Future Improvements](#future-improvements)
+* [Challenge Submission](#challenge-submission)
+* [Contributing](#contributing)
+* [License](#license)
+* [Acknowledgements](#acknowledgements)
 
 ---
 
-❗ Problem Statement
+## Project Overview
 
-Millions of people with visual, hearing, and speech impairments experience challenges while performing common everyday activities.
+**AISense – Universal Accessibility Assistant** is an AI-powered accessibility platform designed to support people with visual, hearing, and speech impairments.
 
-These challenges include:
+The application combines multiple assistive services into one unified platform, enabling users to:
 
-- Identifying surrounding objects
-- Reading books, notices, documents, and labels
-- Recognizing currency notes
-- Understanding road and traffic signs
-- Communicating through sign language
-- Identifying colors
-- Navigating unfamiliar locations
-- Understanding complete scenes and surroundings
-- Receiving immediate assistance in public spaces
-- Accessing digital information independently
+* Recognize nearby objects
+* Read printed text
+* Understand complete scenes
+* Identify currency notes
+* Detect colors
+* Recognize traffic signs
+* Communicate through sign language
+* Detect human faces
+* Receive navigation guidance
+* Hear AI-generated results through voice feedback
 
-Most existing accessibility applications solve only one problem at a time.
+Instead of requiring users to install and manage several separate accessibility applications, AISense provides a consistent and accessible interface for multiple real-world assistance tasks.
 
-For example, one application may provide OCR text reading, while another may support object detection, sign language recognition, or navigation. This forces users to switch repeatedly between different applications and interfaces.
+The platform is developed using a cross-platform **Flutter frontend**, a scalable **FastAPI backend**, and specialized artificial intelligence technologies such as **YOLOv8, MediaPipe, EasyOCR, Google Gemini AI, OpenCV, and OpenRouteService**.
 
-The challenge is not only:
-
-«“How can AI detect an object?”»
-
-The larger challenge is:
-
-«“How can AI combine multiple accessibility services into one intelligent assistant that provides real-time, context-aware, and easy-to-use support?”»
-
-AISense addresses this challenge by integrating multiple assistive AI services into one accessible platform.
+AISense was developed for the **IBM AI Builders Challenge 2026**, with **IBM Bob** serving as the primary AI-assisted development tool during planning, system design, implementation, debugging, testing, documentation, and deployment preparation.
 
 ---
 
-💡 Proposed Solution
+## Challenge Theme
 
-AISense introduces a unified AI-powered accessibility platform where multiple intelligent services work together to support users in real time.
+### Reimagine Creative Industries with AI
+
+Artificial Intelligence is transforming how people interact with digital products, communication systems, visual information, and real-world environments.
+
+AISense applies AI to accessibility by helping people with disabilities access information, understand their surroundings, communicate more effectively, and navigate unfamiliar environments with greater confidence.
+
+The project focuses on:
+
+* AI-powered accessibility
+* Assistive computer vision
+* Real-time object recognition
+* Sign language recognition
+* OCR-based text reading
+* Generative AI scene understanding
+* Currency recognition
+* Traffic sign detection
+* Smart navigation
+* Voice-based assistance
+* Inclusive interface design
+
+AISense demonstrates how multiple AI technologies can operate together as one intelligent accessibility assistant.
+
+---
+
+## Problem Statement
+
+People with visual, hearing, and speech impairments may experience difficulties while performing common everyday activities.
+
+These challenges can include:
+
+* Identifying nearby people and objects
+* Reading books, notices, documents, labels, and signboards
+* Recognizing currency denominations
+* Understanding traffic signs
+* Communicating through sign language
+* Identifying colors
+* Navigating unfamiliar locations
+* Understanding complete scenes and surroundings
+* Receiving immediate assistance in public places
+* Accessing information independently
+
+Many existing accessibility applications address only one problem at a time. A user may require one application for OCR, another for object detection, another for navigation, and another for sign language recognition.
+
+This creates a fragmented experience and requires users to repeatedly switch between different applications and interfaces.
+
+The challenge is not simply:
+
+> “How can AI detect an object?”
+
+The broader challenge is:
+
+> “How can multiple AI-powered accessibility services be combined into one intelligent assistant that provides real-time, context-aware, and easy-to-use support?”
+
+---
+
+## Proposed Solution
+
+AISense introduces a unified AI-powered accessibility platform where several specialized services work together through a centralized backend.
 
 The platform includes:
 
-- 👁️ Object Detection
-- 🤟 Sign Language Recognition
-- 📝 OCR Text Reading
-- 💵 Currency Detection
-- 🎨 Color Detection
-- 🌄 AI Scene Description
-- 🚦 Traffic Sign Detection
-- 😊 Face Detection
-- 🧭 Smart Navigation
-- 🔊 Voice Feedback
+* Object Detection
+* Sign Language Recognition
+* OCR Text Reading
+* Currency Detection
+* Color Detection
+* AI Scene Description
+* Traffic Sign Detection
+* Face Detection
+* Smart Navigation
+* Voice Feedback
 
-Each module performs a specialized accessibility task.
+The Flutter application captures information using the device camera, uploaded images, voice commands, location services, and user-provided destination details.
 
-The Flutter application captures camera images, live video, user input, or voice commands and sends the required data to the FastAPI backend.
+The captured data is securely sent to the FastAPI backend. The backend validates the request, selects the appropriate AI module, processes the input, and returns a structured response.
 
-The backend then routes the request to the correct AI service, processes the information, and returns a structured result.
+AISense presents results through:
 
-AISense displays the result through:
+* Spoken voice feedback
+* On-screen text
+* Detection labels
+* Visual bounding boxes
+* Navigation instructions
+* Accessible alerts
+* Error notifications
 
-- Spoken voice feedback
-- On-screen text
-- Detection labels
-- Visual bounding boxes
-- Navigation instructions
-- Accessible alerts
-
-This integrated design provides a consistent user experience across multiple accessibility functions.
-
----
-
-✨ Key Features
-
-Feature| Description
-Real-Time Object Detection| Identifies surrounding objects using computer vision
-AI Scene Description| Generates meaningful descriptions of complete environments
-Sign Language Recognition| Converts hand gestures into readable text
-OCR Text Reader| Extracts and reads printed or handwritten text
-Currency Detection| Identifies currency notes and announces denominations
-Color Detection| Recognizes dominant colors in objects and images
-Face Detection| Detects human faces in camera input
-Traffic Sign Detection| Recognizes important road and traffic signs
-Smart Navigation| Provides route guidance and spoken directions
-Voice Feedback| Converts AI results into speech
-Accessible User Interface| Uses clear controls, large buttons, and readable layouts
-Cross-Platform Support| Runs on Android, iOS, and Flutter Web
-Modular AI Architecture| Supports easy integration of additional AI services
-FastAPI Backend| Provides structured and scalable REST APIs
-Responsive Design| Adapts to different device screen sizes
+This architecture creates a consistent user experience across multiple accessibility services.
 
 ---
 
-🤖 Core AI Features
+## Key Features
 
-👁️ Object Detection
-
-The object detection module identifies common objects in real time using AI-powered computer vision.
-
-It can detect items such as:
-
-- People
-- Chairs
-- Tables
-- Vehicles
-- Bags
-- Bottles
-- Mobile phones
-- Animals
-- Doors
-- Household objects
-
-Detected objects are displayed visually and announced through voice feedback.
-
-This helps visually impaired users understand nearby objects and avoid obstacles.
+| Feature                    | Description                                                          |
+| -------------------------- | -------------------------------------------------------------------- |
+| Real-Time Object Detection | Identifies nearby objects using computer vision                      |
+| AI Scene Description       | Generates natural-language descriptions of complete environments     |
+| Sign Language Recognition  | Converts supported hand gestures into readable text                  |
+| OCR Text Reader            | Extracts text from images, documents, notices, and labels            |
+| Currency Detection         | Recognizes currency notes and announces their denominations          |
+| Color Detection            | Identifies dominant or selected colors                               |
+| Face Detection             | Detects human faces and their positions in camera input              |
+| Traffic Sign Detection     | Recognizes important road and warning signs                          |
+| Smart Navigation           | Provides route guidance, distance information, and spoken directions |
+| Voice Feedback             | Converts important AI results into speech                            |
+| Accessible Interface       | Uses readable layouts, clear controls, and large interaction areas   |
+| Cross-Platform Support     | Supports Android, iOS, and Flutter Web                               |
+| Modular Architecture       | Allows AI modules to be maintained and upgraded independently        |
+| FastAPI Backend            | Provides structured, scalable, and documented REST APIs              |
+| Responsive Design          | Adapts to different device sizes and screen orientations             |
 
 ---
 
-🤟 Sign Language Recognition
+## Core AI Modules
 
-The sign language recognition module analyzes hand gestures using MediaPipe and computer vision.
+### Object Detection
 
-It converts supported gestures into readable text and can provide voice output when required.
+The object detection module uses **YOLOv8** to identify common objects from live camera input or uploaded images.
 
-This feature supports communication between:
+It can recognize objects such as:
 
-- Hearing-impaired users
-- Speech-impaired users
-- Family members
-- Teachers
-- Healthcare professionals
-- General users unfamiliar with sign language
+* People
+* Chairs
+* Tables
+* Vehicles
+* Bags
+* Bottles
+* Mobile phones
+* Animals
+* Doors
+* Household items
 
-The module can be expanded in the future to support complete sign language sentences and multiple regional sign languages.
+Detected objects can be highlighted using bounding boxes, displayed as text, and announced using voice feedback.
 
----
-
-📝 OCR Text Reader
-
-The OCR module extracts text from images and camera input using EasyOCR.
-
-It can read:
-
-- Books
-- Notices
-- Documents
-- Signboards
-- Medicine labels
-- Product packages
-- Bills
-- Menus
-- Printed instructions
-- Educational materials
-
-The extracted text is displayed on screen and converted into speech using text-to-speech technology.
+This feature helps visually impaired users understand their immediate surroundings and identify possible obstacles.
 
 ---
 
-💵 Currency Detection
+### Sign Language Recognition
 
-The currency detection module recognizes currency notes and identifies their denomination.
+The sign language recognition module uses **MediaPipe** and computer vision to analyze hand landmarks and supported gestures.
 
-The detected value is announced using voice feedback.
+Recognized gestures are converted into readable text and can also be presented through voice output.
 
-This feature helps visually impaired users:
+This module can support communication between:
 
-- Verify currency notes
-- Perform financial transactions
-- Avoid denomination confusion
-- Increase independence during shopping and travel
+* Hearing-impaired users
+* Speech-impaired users
+* Family members
+* Teachers
+* Healthcare professionals
+* People unfamiliar with sign language
 
----
-
-🌄 AI Scene Description
-
-The scene description module uses Google Gemini AI to generate a natural-language explanation of the user’s surroundings.
-
-Instead of detecting only individual objects, it describes the complete scene.
-
-For example:
-
-«“A person is standing near a pedestrian crossing. A red car is approaching from the left, and a traffic signal is visible ahead.”»
-
-This provides users with a broader understanding of their environment.
+Future versions can expand the module to support complete sentences and additional regional sign languages.
 
 ---
 
-🚦 Traffic Sign Detection
+### OCR Text Reader
 
-The traffic sign detection module recognizes important road signs such as:
+The OCR module uses **EasyOCR** to extract text from camera images and uploaded files.
 
-- Stop
-- No Entry
-- Pedestrian Crossing
-- Speed Limit
-- School Zone
-- No Parking
-- Turn Left
-- Turn Right
-- Road Work
-- Warning Signs
+It can process content such as:
 
-The result can be displayed visually and announced through voice feedback.
+* Books
+* Notices
+* Documents
+* Signboards
+* Medicine labels
+* Product packages
+* Bills
+* Menus
+* Printed instructions
+* Educational materials
 
----
-
-🎨 Color Detection
-
-The color detection module identifies the dominant or selected color of an object.
-
-It can help users with:
-
-- Choosing clothes
-- Identifying products
-- Sorting objects
-- Recognizing traffic light colors
-- Performing educational activities
-- Understanding visual content
+Extracted text is displayed on screen and can be read aloud using text-to-speech technology.
 
 ---
 
-😊 Face Detection
+### Currency Detection
 
-The face detection module detects human faces in images and live camera input.
+The currency detection module analyzes currency notes and identifies their denominations.
 
-It can identify the number and location of visible faces.
+The detected value can be displayed and announced using voice feedback.
 
-Future versions may support authorized person recognition while following privacy and security guidelines.
+This feature is designed to help visually impaired users:
+
+* Verify currency notes
+* Complete financial transactions
+* Avoid denomination confusion
+* Increase independence while shopping or travelling
+
+Model availability depends on the trained currency dataset and model weights installed in the deployment environment.
 
 ---
 
-🧭 Smart Navigation
+### AI Scene Description
 
-The smart navigation module uses OpenRouteService and location services to provide route guidance.
+The scene description module uses **Google Gemini AI** to generate a natural-language explanation of the user’s surroundings.
+
+Unlike traditional object detection, which identifies individual objects, scene description provides broader environmental context.
+
+Example:
+
+> “A person is standing near a pedestrian crossing. A red car is approaching from the left, and a traffic signal is visible ahead.”
+
+This feature helps users understand relationships between people, objects, locations, and potential hazards.
+
+---
+
+### Traffic Sign Detection
+
+The traffic sign detection module identifies important road signs and warning symbols.
+
+Supported categories may include:
+
+* Stop
+* No Entry
+* Pedestrian Crossing
+* Speed Limit
+* School Zone
+* No Parking
+* Turn Left
+* Turn Right
+* Road Work
+* Warning Signs
+
+Detected signs can be displayed visually and announced through voice feedback.
+
+---
+
+### Color Detection
+
+The color detection module uses **OpenCV** to identify the dominant or selected color of an object or image region.
+
+It can assist users with:
+
+* Selecting clothes
+* Identifying products
+* Sorting objects
+* Recognizing traffic-light colors
+* Understanding visual content
+* Completing educational activities
+
+---
+
+### Face Detection
+
+The face detection module uses **OpenCV** to identify human faces in images and live camera input.
+
+It can detect:
+
+* The number of visible faces
+* The approximate position of each face
+* Face regions within an image
+
+Future versions may support authorized person recognition while following appropriate privacy and security standards.
+
+---
+
+### Smart Navigation
+
+The navigation module uses **OpenRouteService** and device location services to provide route information.
 
 It supports:
 
-- Destination search
-- Route generation
-- Distance estimation
-- Spoken directions
-- Turn-by-turn instructions
-- Safer travel support
+* Destination search
+* Route generation
+* Distance estimation
+* Spoken directions
+* Turn-by-turn instructions
+* Travel assistance
 
-The module is intended to help users navigate unfamiliar environments with greater confidence.
-
----
-
-🔊 Voice Feedback
-
-AISense converts important AI results into spoken audio using Flutter text-to-speech.
-
-Voice feedback is used for:
-
-- Object names
-- OCR text
-- Currency values
-- Scene descriptions
-- Traffic signs
-- Navigation instructions
-- Alerts
-- Error messages
-
-This enables users to receive information without depending only on visual content.
+The module is designed to help users navigate unfamiliar environments with greater confidence.
 
 ---
 
-💎 Innovation
+### Voice Feedback
 
-Traditional accessibility applications usually focus on a single function.
+AISense uses **Flutter Text-to-Speech** to convert important results into spoken audio.
 
-A typical application may follow this model:
+Voice feedback can be provided for:
 
+* Detected objects
+* OCR-extracted text
+* Currency denominations
+* Scene descriptions
+* Traffic signs
+* Navigation directions
+* Warnings
+* Application errors
+
+This enables users to receive information without depending entirely on visual content.
+
+---
+
+## Innovation
+
+Traditional accessibility applications commonly follow a single-purpose model:
+
+```text
 User
   │
   ▼
@@ -363,49 +388,53 @@ One AI Model
   │
   ▼
 One Accessibility Feature
+```
 
-AISense follows a unified model:
+AISense follows a unified accessibility model:
 
+```text
                          USER
                            │
                            ▼
-             AISense Universal Assistant
+              AISense Universal Assistant
                            │
        ┌───────────────────┼───────────────────┐
        ▼                   ▼                   ▼
-   Computer Vision       OCR AI         Sign Language AI
+ Computer Vision         OCR AI        Sign Language AI
        │                   │                   │
-       ├──────────────┬─────┴─────┬────────────┤
-       ▼              ▼           ▼            ▼
-   Object AI      Currency AI  Scene AI   Navigation AI
-       │              │           │            │
-       └──────────────┴─────┬─────┴────────────┘
+       ├────────────┬───────┴───────┬──────────┤
+       ▼            ▼               ▼          ▼
+  Object AI    Currency AI      Scene AI   Navigation AI
+       │            │               │          │
+       └────────────┴───────┬───────┴──────────┘
                             ▼
-               Intelligent Accessibility
+                Intelligent Accessibility
+```
 
 The main innovation of AISense is the integration of several assistive AI technologies into one consistent application.
 
 This unified architecture:
 
-- Reduces the need for multiple applications
-- Simplifies the user experience
-- Enables shared backend services
-- Supports context-aware assistance
-- Improves accessibility
-- Allows future AI modules to be added easily
-- Creates a foundation for personalized assistive technology
+* Reduces dependence on multiple applications
+* Simplifies the user experience
+* Enables shared backend services
+* Supports context-aware assistance
+* Improves accessibility and digital inclusion
+* Allows new AI modules to be added easily
+* Creates a foundation for personalized assistive technology
 
 ---
 
-🏗️ System Architecture
+## System Architecture
 
+```text
 ┌─────────────────────────────────────────────────────────┐
 │                         USER                            │
 └────────────────────────────┬────────────────────────────┘
                              │
                              ▼
 ┌─────────────────────────────────────────────────────────┐
-│                  FLUTTER FRONTEND                       │
+│                   FLUTTER FRONTEND                      │
 │                                                         │
 │  • Landing Page                                         │
 │  • Authentication                                       │
@@ -420,7 +449,7 @@ This unified architecture:
                              │
                              ▼
 ┌─────────────────────────────────────────────────────────┐
-│                   FASTAPI BACKEND                       │
+│                    FASTAPI BACKEND                      │
 │                                                         │
 │  • Authentication                                       │
 │  • Request Validation                                   │
@@ -451,32 +480,32 @@ This unified architecture:
 │  • SQLite for Development                               │
 │  • PostgreSQL for Production                            │
 └─────────────────────────────────────────────────────────┘
+```
 
 ---
 
-🤖 AI Architecture
+## AI Architecture
 
-AISense follows a modular AI architecture.
+AISense follows a modular AI architecture. Each accessibility feature is implemented as an independent service and accessed through the centralized FastAPI backend.
 
-Each accessibility feature is implemented as an independent module. These modules communicate through the centralized FastAPI backend.
-
+```text
                               USER
                                 │
                                 ▼
-                      FLUTTER APPLICATION
+                       FLUTTER APPLICATION
                                 │
                          REST API REQUEST
                                 │
                                 ▼
-                      FASTAPI BACKEND SERVER
+                       FASTAPI BACKEND
                                 │
         ┌───────────────┬───────┼────────┬───────────────┐
         ▼               ▼       ▼        ▼               ▼
       YOLOv8         EasyOCR  MediaPipe  Gemini AI     OpenCV
         │               │       │        │               │
         ▼               ▼       ▼        ▼               ▼
-      Object           OCR     Sign     Scene          Face /
-     Detection        Reader  Language Description     Color
+      Object           OCR     Sign     Scene         Face and
+     Detection        Reader  Language Description   Color Detection
         │               │       │        │               │
         └───────────────┴───────┼────────┴───────────────┘
                                 │
@@ -487,526 +516,181 @@ Each accessibility feature is implemented as an independent module. These module
                └────────────────┼────────────────┘
                                 ▼
                      SQLite / PostgreSQL
+```
 
 This architecture improves:
 
-- Maintainability
-- Scalability
-- Testing
-- Code organization
-- Error isolation
-- AI model replacement
-- Future module integration
+* Maintainability
+* Scalability
+* Testing
+* Code organization
+* Error isolation
+* AI model replacement
+* Future module integration
 
 ---
 
-🧠 AI Models Used
+## AI Technologies
 
-Feature| AI Technology
-Object Detection| YOLOv8
-Sign Language Recognition| MediaPipe
-OCR Text Reading| EasyOCR
-AI Scene Description| Google Gemini AI
-Face Detection| OpenCV
-Color Detection| OpenCV
-Currency Detection| Computer Vision Model
-Traffic Sign Detection| YOLO / Computer Vision
-Smart Navigation| OpenRouteService API
-Voice Feedback| Flutter TTS
+| Feature                   | Technology                   |
+| ------------------------- | ---------------------------- |
+| Object Detection          | YOLOv8                       |
+| Sign Language Recognition | MediaPipe                    |
+| OCR Text Reading          | EasyOCR                      |
+| AI Scene Description      | Google Gemini AI             |
+| Face Detection            | OpenCV                       |
+| Color Detection           | OpenCV                       |
+| Currency Detection        | Custom Computer Vision Model |
+| Traffic Sign Detection    | YOLO / Computer Vision       |
+| Smart Navigation          | OpenRouteService API         |
+| Voice Feedback            | Flutter Text-to-Speech       |
 
-Each model is selected for a specialized task while maintaining modularity and fast response times.
+Each technology is selected for a specialized task while maintaining modularity and efficient response handling.
 
 ---
 
-🔄 AI Workflow
+## Application Workflow
 
-Step 1 — User Opens AISense
+### 1. Select an Accessibility Service
 
-The user launches the application and selects an accessibility service.
+The user opens AISense and selects a service such as object detection, OCR reading, currency detection, scene description, sign language recognition, or navigation.
+
+### 2. Capture Input
+
+AISense collects input through:
+
+* Live camera feed
+* Uploaded image
+* Voice command
+* Device microphone
+* GPS location
+* Destination input
+
+### 3. Send API Request
+
+The Flutter application securely sends the captured data to the FastAPI backend using REST API requests.
+
+### 4. Route the Request
+
+The backend validates the request and routes it to the appropriate AI module.
+
+### 5. Process the Input
+
+The selected AI technology processes the input.
 
 Examples:
 
-- Object Detection
-- OCR Reader
-- Currency Detection
-- Scene Description
-- Sign Language
-- Navigation
+* YOLOv8 detects objects
+* EasyOCR extracts text
+* MediaPipe analyzes hand landmarks
+* Gemini AI describes scenes
+* OpenCV detects faces and colors
+* OpenRouteService generates routes
 
-Step 2 — Capture Input
+### 6. Generate Structured Results
 
-AISense captures input through:
+The backend generates a structured JSON response containing relevant information such as:
 
-- Live camera feed
-- Uploaded image
-- Device microphone
-- Voice command
-- GPS location
-- Destination input
+* Detection results
+* Confidence scores
+* Recognized text
+* Scene descriptions
+* Navigation instructions
+* Processing status
+* Error information
 
-Step 3 — Send Request
+### 7. Present the Result
 
-The Flutter application sends the captured data to the FastAPI backend using REST API requests.
+AISense communicates the result through:
 
-Step 4 — Route to AI Module
-
-The backend identifies the selected accessibility service and routes the request to the correct AI module.
-
-Step 5 — AI Processing
-
-The selected AI model processes the input.
-
-Examples:
-
-- YOLOv8 detects objects
-- EasyOCR extracts text
-- MediaPipe analyzes hand gestures
-- Gemini AI describes scenes
-- OpenCV detects colors and faces
-- OpenRouteService generates routes
-
-Step 6 — Generate Structured Result
-
-The backend creates a structured JSON response containing:
-
-- Detection result
-- Confidence score
-- Recognized text
-- Scene description
-- Navigation instructions
-- Processing status
-- Error information, when required
-
-Step 7 — Display and Speak Result
-
-AISense provides results through:
-
-- On-screen text
-- Voice feedback
-- Bounding boxes
-- Visual labels
-- Accessible alerts
-- Navigation directions
+* On-screen text
+* Voice feedback
+* Visual labels
+* Bounding boxes
+* Accessible alerts
+* Navigation directions
 
 ---
 
-⚡ Real-Time AI Processing
+## Real-Time Processing
 
-AISense is designed to deliver fast accessibility assistance through continuous AI processing.
+AISense is designed to provide responsive accessibility assistance through optimized AI processing.
 
-The platform supports:
+Performance can be improved using:
 
-- Live object detection
-- Real-time sign language recognition
-- Instant OCR text extraction
-- AI scene description
-- Face detection
-- Currency recognition
-- Traffic sign recognition
-- Color identification
-- Voice output
-- Navigation guidance
+* Image resizing
+* Frame skipping
+* Model caching
+* Asynchronous API processing
+* Optimized image compression
+* Lightweight AI models
+* Device-side preprocessing
+* Cloud-based inference
 
-To improve responsiveness, the system can use:
-
-- Image resizing
-- Frame skipping
-- Model caching
-- Asynchronous API processing
-- Optimized image compression
-- Lightweight AI models
-- Device-side preprocessing
-- Cloud-based inference
+Actual response time depends on the device, network connection, installed AI models, selected feature, and hosting environment.
 
 ---
 
-🛠️ Technology Stack
+## Technology Stack
 
-Frontend
+### Frontend
 
-- Flutter
-- Dart
-- Material Design
-- Flutter Camera Plugin
-- Flutter TTS
-- HTTP Package
-- Provider or state-management package
-- Geolocator
-- Image Picker
+* Flutter
+* Dart
+* Material Design
+* Flutter Camera
+* Flutter TTS
+* HTTP
+* Provider
+* Geolocator
+* Image Picker
 
-Backend
+### Backend
 
-- Python
-- FastAPI
-- Uvicorn
-- SQLAlchemy
-- Pydanti
-AISense applies AI to accessibility by enabling people with disabilities to access information, communicate more effectively, and navigate their surroundings with confidence.
+* Python 3.11+
+* FastAPI
+* Uvicorn
+* SQLAlchemy
+* Pydantic
+* REST APIs
 
-The platform focuses on:
+### Artificial Intelligence
 
-- AI-powered accessibility
-- Computer vision
-- Real-time object recognition
-- Sign language recognition
-- OCR text reading
-- Scene understanding
-- Smart navigation
-- Inclusive technology
+* YOLOv8
+* Google Gemini AI
+* MediaPipe
+* EasyOCR
+* OpenCV
+* Custom Computer Vision Models
 
-AISense demonstrates how multiple AI technologies can work together to create an intelligent accessibility assistant that improves everyday life.
+### Database
 
----
+* SQLite for development
+* PostgreSQL for production
 
-❗ Problem Statement
+### External Services
 
-Millions of people with visual, hearing, and speech impairments face challenges while performing everyday activities.
+* OpenRouteService
+* Google Gemini API
 
-Common challenges include:
+### Development Tools
 
-- Identifying surrounding objects
-- Reading printed documents
-- Understanding traffic signs
-- Recognizing currency notes
-- Communicating through sign language
-- Navigating unfamiliar environments
-- Understanding scenes and surroundings
+* IBM Bob
+* Visual Studio Code
+* Git
+* GitHub
+* Docker
 
-Existing accessibility applications usually solve only one problem at a time, requiring users to switch between different applications and repeatedly perform the same tasks.
+### Deployment
 
-The challenge is not simply:
-
-«"How can AI detect an object?"»
-
-The larger challenge is:
-
-«"How can AI combine multiple accessibility services into one intelligent assistant that provides real-time, context-aware support?"»
+* Vercel
+* Render
 
 ---
 
-💡 Solution Description
+## Project Structure
 
-AISense introduces an integrated AI-powered accessibility platform where multiple intelligent services work together to assist users in real time.
-
-The platform includes:
-
-- 👁️ Object Detection
-- 🤟 Sign Language Recognition
-- 📝 OCR Text Reader
-- 💵 Currency Detection
-- 🎨 Color Detection
-- 🌄 AI Scene Description
-- 🚦 Traffic Sign Detection
-- 😊 Face Detection
-- 🧭 Smart Navigation
-
-                  USER
-                    │
-                    ▼
-        AISense Universal Assistant
-                    │
- ┌──────────┬──────────┬───────────┐
- ▼          ▼          ▼
-Object     OCR      Sign Language
-Detection  Reader   Recognition
- │          │          │
- ▼          ▼          ▼
-Currency  Scene     Navigation
-Detection Description Assistant
- │          │          │
- └──────────┼──────────┘
-            ▼
-   Intelligent Accessibility
-
-Each AI module performs a specialized task while sharing information through a centralized backend, enabling a consistent and efficient user experience.
-
----
-
-✨ Key Features
-
-- Real-time Object Detection
-- AI Scene Description
-- Sign Language Recognition
-- OCR Text Reading
-- Currency Detection
-- Color Detection
-- Face Detection
-- Traffic Sign Detection
-- Smart Navigation Assistance
-- Voice Feedback
-- Accessible Flutter Interface
-- FastAPI Backend
-- AI-powered Computer Vision
-- Responsive Cross-Platform Design
-
----
-
-🤖 Core AI Features
-
-👁️ Object Detection
-
-Detects everyday objects in real time using AI-powered computer vision and announces detected objects through voice output.
-
-🤟 Sign Language Recognition
-
-Recognizes hand gestures and converts sign language into readable text, improving communication for hearing- and speech-impaired users.
-
-📝 OCR Text Reader
-
-Extracts text from books, notices, documents, medicine labels, and signboards, then converts it into speech.
-
-💵 Currency Detection
-
-Recognizes currency notes and announces their denomination using voice feedback.
-
-🌄 AI Scene Description
-
-Uses Generative AI to describe complete surroundings, helping visually impaired users understand nearby people, objects, and environments.
-
-🚦 Traffic Sign Detection
-
-Detects important road signs such as Stop, No Entry, Pedestrian Crossing, and Speed Limit signs.
-
-🎨 Color Detection
-
-Identifies dominant colors of objects to assist users in daily activities.
-
-🧭 Smart Navigation
-
-Provides AI-assisted navigation with spoken guidance to help users travel safely.
-
----
-🤖 AI Architecture
-
-AISense follows a modular AI architecture where each accessibility feature is implemented as an independent AI service. This architecture enables scalability, maintainability, and easy integration of future AI models.
-
-Each AI service performs a specialized task while communicating through a centralized FastAPI backend.
-
-                        USER
-                          │
-                          ▼
-                FLUTTER APPLICATION
-                          │
-                 REST API REQUESTS
-                          │
-                          ▼
-                 FASTAPI BACKEND SERVER
-                          │
- ┌──────────┬──────────┬──────────┬──────────┐
- ▼          ▼          ▼          ▼
-YOLOv8    EasyOCR   MediaPipe   Gemini AI
- │          │          │          │
- ▼          ▼          ▼          ▼
-Objects    OCR      Sign      Scene
-Detection  Reader   Language  Description
- │
- ├───────────────┬───────────────────┐
- ▼               ▼                   ▼
-Currency     Face Detection     Navigation
-Detection
-                          │
-                          ▼
-                     SQLite Database
-
-The backend coordinates all AI services and sends structured responses back to the Flutter application.
-
----
-
-🧠 AI Models Used
-
-AISense integrates multiple AI technologies to provide intelligent accessibility assistance.
-
-Feature| AI Technology
-Object Detection| YOLOv8
-Sign Language Recognition| MediaPipe
-OCR Text Reading| EasyOCR
-Scene Description| Google Gemini AI
-Face Detection| OpenCV
-Color Detection| OpenCV
-Currency Detection| Computer Vision
-Navigation| OpenRouteService API
-
-Each model is optimized for its specific accessibility task while maintaining fast response times.
-
----
-
-🔄 AI Workflow
-
-Step 1 – User Opens AISense
-
-The user launches the application and selects an accessibility feature.
-
-↓
-
-Step 2 – Capture Input
-
-The application captures:
-
-- Live Camera Feed
-- Image
-- Voice Command
-
-↓
-
-Step 3 – Backend Processing
-
-The captured input is securely sent to the FastAPI backend.
-
-↓
-
-Step 4 – AI Processing
-
-The backend routes the request to the appropriate AI model.
-
-↓
-
-Step 5 – Result Generation
-
-The AI model analyzes the input and generates structured results.
-
-↓
-
-Step 6 – Voice & Text Output
-
-AISense presents the result through:
-
-- Voice Feedback
-- On-screen Text
-- Visual Highlights
-
-This real-time workflow enables users to interact naturally with their surroundings.
-
----
-
-🏗️ System Architecture
-
-┌─────────────────────────────────────────────┐
-│                   USER                      │
-└─────────────────────┬───────────────────────┘
-                      │
-                      ▼
-┌─────────────────────────────────────────────┐
-│            FLUTTER FRONTEND                 │
-│                                             │
-│  Home Screen                                │
-│  Accessibility Dashboard                    │
-│  Camera Interface                            │
-│  Voice Output                               │
-│  Settings                                   │
-└─────────────────────┬───────────────────────┘
-                      │
-                 REST API
-                      │
-                      ▼
-┌─────────────────────────────────────────────┐
-│             FASTAPI BACKEND                 │
-│                                             │
-│ Authentication                              │
-│ AI Services                                 │
-│ API Management                              │
-│ Database Operations                         │
-└─────────────────────┬───────────────────────┘
-                      │
-                      ▼
-┌─────────────────────────────────────────────┐
-│             AI MODULES                      │
-│                                             │
-│ YOLOv8                                      │
-│ MediaPipe                                   │
-│ EasyOCR                                     │
-│ Google Gemini AI                            │
-│ OpenCV                                      │
-└─────────────────────┬───────────────────────┘
-                      │
-                      ▼
-┌─────────────────────────────────────────────┐
-│              DATABASE                       │
-│         SQLite / PostgreSQL                 │
-└─────────────────────────────────────────────┘
-
----
-
-⚡ Real-Time AI Processing
-
-AISense is designed to provide instant assistance through continuous AI processing.
-
-The platform supports:
-
-- Live Object Detection
-- Real-Time Sign Language Recognition
-- Instant OCR Text Reading
-- AI Scene Description
-- Face Detection
-- Currency Recognition
-- Traffic Sign Detection
-- Color Identification
-
-Optimized AI models ensure low latency and fast response times, enabling users to receive immediate feedback while interacting with the environment.
-
----
-
-🛠️ Technology Stack
-
-Frontend
-
-- Flutter
-- Dart
-- Material Design
-- Camera Plugin
-- Flutter TTS
-- HTTP Package
-
-Backend
-
-- Python
-- FastAPI
-- Uvicorn
-- SQLAlchemy
-- Pydantic
-
-Artificial Intelligence
-
-- YOLOv8
-- Google Gemini AI
-- MediaPipe
-- EasyOCR
-- OpenCV
-
-Database
-
-- SQLite (Development)
-- PostgreSQL (Production)
-
-Development Tools
-
-- IBM Bob
-- Visual Studio Code
-- Git
-- GitHub
-- Docker
-
----
-
-🔷 How IBM Bob Was Used
-
-IBM Bob served as the primary AI-assisted development tool throughout the development of AISense.
-
-IBM Bob assisted in:
-
-- Understanding the project architecture
-- Planning AI module integration
-- Developing Flutter frontend components
-- Building FastAPI backend services
-- Designing REST APIs
-- Debugging backend and frontend communication
-- Improving UI and user experience
-- Optimizing AI workflows
-- Testing and validating application functionality
-
-IBM Bob acted as an AI development partner across planning, coding, debugging, testing, and deployment, helping accelerate development while maintaining the project's architecture and accessibility goals.
-
----📁 Project Structure
-
+```text
 AISense-Universal-Accessibility/
 │
 ├── backend/
@@ -1053,381 +737,386 @@ AISense-Universal-Accessibility/
 ├── LICENSE
 ├── README.md
 └── .gitignore
+```
 
 ---
 
-🚀 Getting Started
+## Getting Started
 
-Prerequisites
+### Prerequisites
 
-Before running AISense, install the following software:
+Install the following software before running the project:
 
-- Git
-- Python 3.11+
-- Flutter SDK
-- Android Studio
-- Visual Studio Code
-- Node.js (for Flutter Web)
-- Google Chrome (for Web Testing)
+* Git
+* Python 3.11 or later
+* Flutter SDK
+* Android Studio
+* Visual Studio Code
+* Google Chrome for Flutter Web testing
 
 ---
 
-⚙️ Backend Setup
+### Clone the Repository
 
-Step 1 – Clone the Repository
-
+```bash
 git clone https://github.com/your-username/AISense-Universal-Accessibility.git
-
-cd AISense-Universal-Accessibility/backend
+cd AISense-Universal-Accessibility
+```
 
 ---
 
-Step 2 – Create Virtual Environment
+### Backend Setup
 
-Windows
+Navigate to the backend directory:
 
+```bash
+cd backend
+```
+
+Create a virtual environment:
+
+#### Windows
+
+```bash
 python -m venv venv
-
 venv\Scripts\activate
+```
 
-Linux / macOS
+#### Linux or macOS
 
+```bash
 python3 -m venv venv
-
 source venv/bin/activate
+```
 
----
+Install the required packages:
 
-Step 3 – Install Dependencies
-
+```bash
 pip install -r requirements.txt
+```
 
----
+Create the environment file:
 
-Step 4 – Configure Environment Variables
+```bash
+copy .env.example .env
+```
 
-Copy
+On Linux or macOS:
 
-.env.example
+```bash
+cp .env.example .env
+```
 
-to
+Configure the required environment variables and start the server:
 
-.env
+```bash
+uvicorn app:app --host 0.0.0.0 --port 5000 --reload
+```
 
-Then configure:
+Backend address:
 
-- Gemini API Key
-- Database URL
-- Secret Key
-- Navigation API Key
-
----
-
-Step 5 – Run Backend
-
-python app.py
-
-or
-
-uvicorn app:app --reload
-
-Backend URL
-
+```text
 http://localhost:5000
+```
 
-Health Check
+Health-check address:
 
+```text
 http://localhost:5000/health
+```
 
 ---
 
-💻 Flutter Frontend Setup
+### Flutter Frontend Setup
 
-Navigate to Flutter project
+Navigate to the Flutter application:
 
+```bash
 cd flutter_app
+```
 
-Install packages
+Install Flutter packages:
 
+```bash
 flutter pub get
+```
 
-Run application
+Run on a connected device or emulator:
 
+```bash
 flutter run
+```
 
-Run on Chrome
+Run in Google Chrome:
 
+```bash
 flutter run -d chrome
+```
 
-Build APK
+Build an Android APK:
 
+```bash
 flutter build apk
+```
 
-Build Web
+Build the web application:
 
+```bash
 flutter build web
+```
 
 ---
 
-🔌 Core API Endpoints
+## Environment Variables
 
-Health Check
+Create a `.env` file inside the backend directory.
 
-GET /health
-
-Object Detection
-
-POST /api/detect/objects
-
-OCR Text Reading
-
-POST /api/ocr/read
-
-Currency Detection
-
-POST /api/currency/detect
-
-Scene Description
-
-POST /api/scene/describe
-
-Sign Language Recognition
-
-POST /api/sign/detect
-
-Face Detection
-
-POST /api/faces/detect
-
-Color Detection
-
-POST /api/colors/detect
-
-Traffic Sign Detection
-
-POST /api/traffic/detect
-
-Navigation
-
-POST /api/navigation/route
-
----
-
-🔐 Environment Variables
-
-Example
-
-GEMINI_API_KEY=your_api_key
-
-OPENROUTESERVICE_API_KEY=your_api_key
-
+```env
+GEMINI_API_KEY=your_gemini_api_key
+OPENROUTESERVICE_API_KEY=your_openrouteservice_api_key
 DATABASE_URL=sqlite:///aisense.db
-
-SECRET_KEY=your_secret_key
-
+SECRET_KEY=replace_with_a_secure_secret_key
 HOST=0.0.0.0
-
 PORT=5000
+```
 
-«⚠️ Never commit your ".env" file, API keys, or secrets to GitHub.»
+> Never commit your `.env` file, private API keys, database credentials, or application secrets to GitHub.
 
----
-
-📸 Screenshots
-
-Include screenshots of the following pages:
-
-- 🏠 Landing Page
-- 🔐 Login Page
-- 📱 Home Dashboard
-- 📷 Live Camera
-- 👁️ Object Detection
-- 🤟 Sign Language Recognition
-- 📝 OCR Reader
-- 💵 Currency Detection
-- 🌄 Scene Description
-- 🚦 Traffic Sign Detection
-- 🎨 Color Detection
-- 🧭 Navigation Assistance
-- ⚙️ Settings
+For production deployment, store sensitive values using the environment-variable settings provided by the hosting platform.
 
 ---
 
-🎥 Demo Video
+## API Endpoints
 
-Create a public demonstration video showcasing:
+| Method | Endpoint                | Description                                  |
+| ------ | ----------------------- | -------------------------------------------- |
+| `GET`  | `/health`               | Returns backend health and model status      |
+| `POST` | `/api/detect/objects`   | Detects objects in an image                  |
+| `POST` | `/api/ocr/read`         | Extracts text from an image                  |
+| `POST` | `/api/currency/detect`  | Detects a currency denomination              |
+| `POST` | `/api/scene/describe`   | Generates a scene description                |
+| `POST` | `/api/sign/detect`      | Recognizes a supported sign-language gesture |
+| `POST` | `/api/faces/detect`     | Detects human faces                          |
+| `POST` | `/api/colors/detect`    | Detects dominant colors                      |
+| `POST` | `/api/traffic/detect`   | Detects traffic signs                        |
+| `POST` | `/api/navigation/route` | Generates navigation information             |
 
-- Project Introduction
-- Problem Statement
-- AI Features
-- Live Demonstration
-- AI Workflow
-- IBM Bob Usage
-- Real-World Impact
-- Future Scope
-
-Upload the video to YouTube and include the link here.
-
----
-
-🌐 Live Application
-
-Frontend
-
-https://your-vercel-app.vercel.app
-
-Backend
-
-https://your-backend.onrender.com
-
-GitHub Repository
-
-https://github.com/your-username/AISense-Universal-Accessibility
+API availability may depend on the models, datasets, API keys, and environment configuration installed on the server.
 
 ---
 
-📄 License
+## Screenshots
 
-This project is licensed under the MIT License.
+Add screenshots inside the `screenshots` directory and replace the placeholders below.
 
-See the LICENSE file for complete details.
+### Landing Page
 
----
-🌍 Real-World Impact
+```markdown
+![AISense Landing Page](screenshots/landing-page.png)
+```
 
-AISense – Universal Accessibility Assistant is designed to improve accessibility and independence for people with disabilities by bringing multiple AI-powered assistive technologies into one platform.
+### Accessibility Dashboard
 
-The application enables users to perform everyday activities with greater confidence, including identifying objects, reading printed text, recognizing currency, understanding scenes, communicating through sign language, and navigating unfamiliar environments.
+```markdown
+![AISense Dashboard](screenshots/dashboard.png)
+```
 
-Potential Users
+### Object Detection
 
-- 👨‍🦯 Visually Impaired Individuals
-- 🧏 Hearing-Impaired Users
-- 🗣️ Speech-Impaired Users
-- 👵 Senior Citizens
-- 👨‍👩‍👧 Caregivers and Family Members
-- 🏥 Hospitals and Rehabilitation Centers
-- 🏫 Educational Institutions
-- 🏢 Accessibility Organizations
-- 🌍 NGOs Supporting Persons with Disabilities
+```markdown
+![Object Detection](screenshots/object-detection.png)
+```
 
-Benefits
+### OCR Text Reader
 
-- Improves independent living
-- Enhances communication
-- Increases personal safety
-- Provides equal access to information
-- Reduces dependence on multiple applications
-- Promotes digital inclusion through AI
+```markdown
+![OCR Text Reader](screenshots/ocr-reader.png)
+```
 
-AISense demonstrates how Artificial Intelligence can bridge accessibility gaps and create a more inclusive digital future.
+### Scene Description
 
----
+```markdown
+![AI Scene Description](screenshots/scene-description.png)
+```
 
-💎 Innovation
+### Additional Recommended Screenshots
 
-Traditional accessibility applications usually solve only one problem.
-
-AISense combines multiple AI technologies into a single intelligent assistant capable of understanding the user's surroundings and providing real-time assistance.
-
-Instead of:
-
-User
- │
- ▼
-One AI Model
- │
- ▼
-One Accessibility Feature
-
-AISense provides:
-
-                  USER
-                    │
-                    ▼
-      AISense Universal Assistant
-                    │
- ┌──────────┬──────────┬──────────┐
- ▼          ▼          ▼
- Vision      OCR      Sign Language
-    AI        AI          AI
- │           │           │
- └───────────┼───────────┘
-             ▼
-     Universal Accessibility
-
-This unified architecture enables seamless interaction between multiple AI services while delivering a consistent and accessible user experience.
+* Login Page
+* Live Camera
+* Sign Language Recognition
+* Currency Detection
+* Traffic Sign Detection
+* Color Detection
+* Navigation Assistance
+* Settings Page
 
 ---
 
-🔮 Future Improvements
+## Demo Video
+
+The demonstration video should include:
+
+1. Project introduction
+2. Problem statement
+3. Proposed solution
+4. Main AI features
+5. Live application demonstration
+6. AI workflow
+7. IBM Bob usage
+8. Real-world impact
+9. Future improvements
+
+**YouTube Demo:** `[Add Public YouTube URL]`
+
+---
+
+## Live Application
+
+| Resource             | Link                          |
+| -------------------- | ----------------------------- |
+| Frontend Application | `[Add Vercel URL]`            |
+| Backend API          | `[Add Render URL]`            |    |
+| GitHub Repository    | `[Add GitHub Repository URL]` |
+| Demo Video           | `[Add YouTube URL]`           |
+
+---
+
+## IBM Bob Integration
+
+IBM Bob served as the primary AI-assisted development tool throughout the development of AISense.
+
+IBM Bob supported the project in:
+
+* Understanding project requirements
+* Planning the overall architecture
+* Designing modular AI services
+* Developing Flutter frontend components
+* Building FastAPI backend APIs
+* Connecting frontend and backend services
+* Debugging API and deployment issues
+* Improving interface accessibility
+* Optimizing AI workflows
+* Testing application functionality
+* Preparing technical documentation
+* Supporting deployment preparation
+
+IBM Bob acted as an AI development partner across planning, implementation, debugging, testing, documentation, and deployment while helping maintain the project’s accessibility goals and technical architecture.
+
+---
+
+## Real-World Impact
+
+AISense is designed to improve accessibility and independence by bringing multiple AI-powered assistive technologies into one platform.
+
+The application can help users perform everyday activities with greater confidence, including:
+
+* Identifying nearby objects
+* Reading printed information
+* Recognizing currency notes
+* Understanding complete scenes
+* Communicating through supported signs
+* Identifying colors
+* Recognizing traffic signs
+* Navigating unfamiliar environments
+
+### Potential Users
+
+* Visually impaired individuals
+* Hearing-impaired individuals
+* Speech-impaired individuals
+* Senior citizens
+* Caregivers and family members
+* Hospitals and rehabilitation centres
+* Educational institutions
+* Accessibility organizations
+* Non-governmental organizations
+
+### Potential Benefits
+
+* Supports independent living
+* Improves access to information
+* Enhances communication
+* Increases personal safety
+* Reduces dependence on multiple applications
+* Promotes inclusive technology
+* Encourages equal participation in digital environments
+
+AISense demonstrates how Artificial Intelligence can help reduce accessibility barriers and contribute to a more inclusive future.
+
+---
+
+## Future Improvements
 
 Future versions of AISense may include:
 
-- 🌐 Multilingual voice assistance
-- ☁️ Cloud-based AI inference
-- 🤖 Personalized AI assistant
-- 🧠 Offline AI model support
-- 👓 Smart glasses integration
-- ⌚ Smartwatch compatibility
-- 🚨 Emergency SOS with live location
-- 🏥 Medicine label recognition
-- 🛒 Shopping assistance
-- 🧭 Indoor navigation
-- 🌍 Real-time language translation
-- 📡 IoT-enabled accessibility devices
-- 🧩 Additional AI modules through a plugin system
+* Multilingual voice assistance
+* Personalized AI assistance
+* Offline AI model support
+* Smart-glasses integration
+* Smartwatch compatibility
+* Emergency SOS with live location
+* Medicine-label recognition
+* Shopping assistance
+* Indoor navigation
+* Real-time language translation
+* Additional regional sign languages
+* Complete sign-language sentence recognition
+* IoT-enabled accessibility devices
+* Cloud-based model inference
+* AI modules through a plugin architecture
 
-These enhancements will further improve usability, accessibility, and real-world adoption.
-
----
-
-🏆 IBM AI Builders Challenge Submission
-
-Field| Details
-Project| AISense – Universal Accessibility Assistant
-Tagline| AI-Powered Universal Accessibility for Everyone
-Challenge| IBM AI Builders Challenge 2026
-Theme| Reimagine Creative Industries with AI
-Primary Development Tool| IBM Bob
-Application Type| AI-Powered Accessibility Platform
-Frontend| Flutter
-Backend| FastAPI
-AI Technologies| YOLOv8, MediaPipe, EasyOCR, Google Gemini AI, OpenCV
-Database| SQLite / PostgreSQL
-Deployment| Vercel + Render
-Category| Accessibility AI / Computer Vision / Assistive Technology
+These improvements can further enhance usability, personalization, accessibility, and real-world adoption.
 
 ---
 
-✅ Submission Checklist
+## Challenge Submission
 
-- ✅ Working AISense prototype
-- ✅ Object Detection
-- ✅ Sign Language Recognition
-- ✅ OCR Text Reader
-- ✅ Currency Detection
-- ✅ Scene Description
-- ✅ Face Detection
-- ✅ Color Detection
-- ✅ Traffic Sign Detection
-- ✅ Smart Navigation
-- ✅ Flutter Frontend
-- ✅ FastAPI Backend
-- ✅ Frontend Connected to Backend
-- ✅ Public GitHub Repository
-- ✅ Complete README Documentation
-- ✅ Backend Documentation
-- ✅ Environment Configuration
-- ✅ Demo Video
-- ✅ Application Screenshots
-- ✅ IBM Bob Usage Documented
-- ✅ IBM SkillsBuild Learning Completed
-- ✅ MIT License Included
+| Field                    | Details                                                   |
+| ------------------------ | --------------------------------------------------------- |
+| Project                  | AISense – Universal Accessibility Assistant               |
+| Tagline                  | AI-Powered Universal Accessibility for Everyone           |
+| Challenge                | IBM AI Builders Challenge 2026                            |
+| Challenge Period         | July 2026                                                 |
+| Theme                    | Reimagine Creative Industries with AI                     |
+| Primary Development Tool | IBM Bob                                                   |
+| Application Type         | AI-Powered Accessibility Platform                         |
+| Frontend                 | Flutter                                                   |
+| Backend                  | FastAPI                                                   |
+| AI Technologies          | YOLOv8, MediaPipe, EasyOCR, Gemini AI and OpenCV          |
+| Database                 | SQLite / PostgreSQL                                       |
+| Deployment               | Vercel and Render                                         |
+| Category                 | Accessibility AI / Computer Vision / Assistive Technology |
 
 ---
 
-🤝 Contributing
+## Submission Checklist
+
+* [x] AISense prototype developed
+* [x] Flutter frontend created
+* [x] FastAPI backend created
+* [x] Frontend connected to backend
+* [x] Object detection module added
+* [x] OCR text reader added
+* [x] Scene description module added
+* [x] Face detection module added
+* [x] Color detection module added
+* [x] Traffic sign module included
+* [x] Navigation module included
+* [x] IBM Bob usage documented
+* [x] README documentation prepared
+* [x] Environment configuration documented
+* [x] MIT License included
+* [ ] Verify trained currency model in production
+* [ ] Verify trained sign-language model in production
+* [ ] Add final application screenshots
+* [ ] Add public demo-video URL
+* [ ] Add final frontend deployment URL
+* [ ] Add final backend deployment URL
+* [ ] Add IBM SkillsBuild certificate evidence
+
+---
+
+## Contributing
 
 Contributions are welcome.
 
@@ -1435,54 +1124,71 @@ To contribute:
 
 1. Fork the repository.
 2. Create a new feature branch.
+
+```bash
+git checkout -b feature/feature-name
+```
+
 3. Commit your changes.
+
+```bash
+git commit -m "Add feature description"
+```
+
 4. Push the branch.
+
+```bash
+git push origin feature/feature-name
+```
+
 5. Open a Pull Request.
 
-Please ensure your code follows the project's coding standards.
+Please ensure that your changes follow the project structure and coding standards.
 
 ---
 
-📄 License
+## License
 
-This project is licensed under the MIT License.
+This project is licensed under the **MIT License**.
 
-See the LICENSE file for more information.
-
----
-
-🙏 Acknowledgements
-
-Special thanks to the technologies and communities that supported the development of AISense:
-
-- IBM AI Builders Challenge
-- IBM Bob
-- IBM SkillsBuild
-- Flutter
-- FastAPI
-- YOLOv8
-- Google Gemini AI
-- MediaPipe
-- EasyOCR
-- OpenCV
-- SQLite
-- PostgreSQL
-- Git & GitHub
-- Open-source AI community
+See the [LICENSE](LICENSE) file for complete details.
 
 ---
 
-⭐ Support
+## Acknowledgements
 
-If you found this project helpful, please consider giving it a ⭐ on GitHub.
+Special thanks to the technologies, tools, and communities that supported the development of AISense:
 
-Your support encourages future development and helps improve accessibility through AI.
+* IBM AI Builders Challenge
+* IBM Bob
+* IBM SkillsBuild
+* Flutter
+* FastAPI
+* YOLOv8
+* Google Gemini AI
+* MediaPipe
+* EasyOCR
+* OpenCV
+* OpenRouteService
+* SQLite
+* PostgreSQL
+* Git and GitHub
+* Open-source AI community
 
 ---
 
-🌍 AISense – Universal Accessibility Assistant
+<div align="center">
 
-Empowering Accessibility Through Artificial Intelligence
+# ♿ AISense
 
-Built with ❤️ for IBM AI Builders Challenge 2026
+### Universal Accessibility Assistant
 
+**Empowering Accessibility Through Artificial Intelligence**
+
+Built with dedication for the **IBM AI Builders Challenge 2026**
+
+<br>
+
+If you found this project useful, consider giving the repository a ⭐.
+
+</div>
