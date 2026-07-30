@@ -77,6 +77,13 @@ def create_app() -> Flask:
     app.register_blueprint(navigation_bp, url_prefix="/api/navigation")
     app.register_blueprint(sign_bp,       url_prefix="/api/sign")
 
+    @app.get("/")
+    def root():
+        return {
+            "status": "ok",
+            "message": "SignSense AI Backend is running",
+        }, 200
+
     # ── Health check ──────────────────────────────────────────────────────
     @app.route("/health")
     def health():
