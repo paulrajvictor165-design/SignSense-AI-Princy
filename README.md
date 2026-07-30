@@ -6,13 +6,6 @@ IBM AI Builders Challenge 2026 — July Challenge
 
 Challenge Theme: Reimagine Creative Industries with AI
 
-<br>"Flutter" (https://img.shields.io/badge/Frontend-Flutter-02569B?style=for-the-badge&logo=flutter)
-"FastAPI" (https://img.shields.io/badge/Backend-FastAPI-009688?style=for-the-badge&logo=fastapi)
-"Python" (https://img.shields.io/badge/Language-Python-3776AB?style=for-the-badge&logo=python)
-"YOLOv8" (https://img.shields.io/badge/Object_Detection-YOLOv8-111F68?style=for-the-badge)
-"Gemini AI" (https://img.shields.io/badge/Generative_AI-Gemini-8E75B2?style=for-the-badge&logo=google)
-"License" (https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
-
 <br>Empowering people with visual, hearing, and speech impairments through intelligent computer vision, voice assistance, and accessible technology.
 
 </div>---
