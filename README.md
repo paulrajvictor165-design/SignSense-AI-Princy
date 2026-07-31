@@ -989,7 +989,7 @@ The project demonstration video should include:
 | Backend API          | https://signsense-ai-princy.onrender.com                |
 | Backend Health Check | https://signsense-ai-princy.onrender.com/health         |
 | GitHub Repository    | https://github.com/paulrajvictor165-design/SignSense-AI |
-| Demo Video           | `[Add Public YouTube Video URL]`                        |
+| Demo Video           | https://youtu.be/30IHU7yjYr0?si=lsrjMiwa405oW8OJ        |
 
 ---
 
